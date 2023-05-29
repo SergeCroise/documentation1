@@ -29,7 +29,7 @@ https://www.nerdfonts.com/font-downloads
 
 The procedure for installing fonts on Rocky Linux is to save the fonts you want to add somewhere, and then install them with the `fc-cache` command. This procedure is not a true installation so much as a registration of the new fonts in the system.
 
-!!! important "Creation of compressed packages"
+!!! warning "Creation of compressed packages"
 
 	The procedure described below is not a standard procedure as each developer has packaged fonts using a custom scheme. So once downloaded and extracted, the contents must be checked to choose the procedure for copying the fonts.
 
@@ -38,7 +38,7 @@ For this guide we will use the `Sauce Code Pro Nerd` font.
 Download the package with:
 
 ```bash
-https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/SourceCodePro.zip
+https://github.com/ryanoasis/nerd-fonts/releases/download/v2.3.3/SourceCodePro.zip
 ```
 
 Next, unzip the contents of the folder and copy the fonts to `~/.local/share/fonts/` with:

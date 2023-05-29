@@ -2,7 +2,7 @@
 title: Installare Neovim
 author: Franco Colussi
 contributors: Steven Spencer, Franco Colussi
-tested with: 8.6, 9.0
+tested with: 8.7, 9.1
 tags:
   - nvchad
   - nvim
@@ -90,7 +90,7 @@ Verificate ora di avere la versione corretta con il comando `nvim -v`, che dovre
 
 ```txt
 nvim -v
-NVIM v0.8.0-dev-877-g35653e6bc
+NVIM v0.8.3
 Build type: RelWithDebInfo
 LuaJIT 2.1.0-beta3
 ```
@@ -102,16 +102,16 @@ L'installazione di un pacchetto precompilato, come sopra, fornisce `nvim` solo a
 Installiamo prima i pacchetti necessari per la compilazione:
 
 ```bash
-dnf install ninja-build libtool autoconf automake cmake gcc gcc-c++ make pkgconfig unzip patch gettext curl
+dnf install ninja-build libtool autoconf automake cmake gcc gcc-c++ make pkgconfig unzip patch gettext curl git
 ```
 
-Una volta installati i pacchetti necessari, dobbiamo scaricare i sorgenti di Neovim distribuiti con _Git_. Nel nostro esempio avremo una cartella già creata a questo scopo in `/home/user/lab/build`. Adattate i vostri comandi in base alla struttura scelta.
+Una volta installati i pacchetti necessari, dobbiamo creare una cartella dove costruire neovim e posizionarci:
 
 Il clone di Neovim, per impostazione predefinita, è sincronizzato con il ramo di sviluppo di Neovim (al momento in cui scriviamo, la versione 8.0). Per compilare la versione stabile dovremo passare al ramo corrispondente prima di clonare con:
 
 ```bash
+mkdir ~/lab/build
 cd ~/lab/build
-git checkout stable
 ```
 
 E successivamente clonare il repository:
@@ -120,10 +120,12 @@ E successivamente clonare il repository:
 git clone https://github.com/neovim/neovim
 ```
 
-Una volta terminata l'operazione, avremo una cartella denominata _neovim_ contenente tutti i file necessari. Il passo successivo consiste nel configurare e compilare i sorgenti. Questo si fa con il comando `make` nella cartella _neovim_ che abbiamo creato:
+Una volta terminata l'operazione, avremo una cartella denominata _neovim_ contenente tutti i file necessari. Il passo successivo consiste nel fare il checkout del ramo stabile, quindi configurare e compilare i sorgenti con il comando `make`.
+
 
 ```bash
 cd ~/lab/build/neovim/
+git checkout stable
 make CMAKE_BUILD_TYPE=RelWithDebInfo
 ```
 
@@ -148,13 +150,13 @@ E verificare la versione:
 
 ```bash
 nvim --version
-NVIM v0.8.0-dev-885-ga5ed89c97
+NVIM v0.8.3
 Build type: RelWithDebInfo
 LuaJIT 2.1.0-beta3
 ....
 ```
 
-Come si può vedere dall'estratto del comando qui sopra, è stata eseguita l'installazione della versione di sviluppo. Entrambe le versioni, quella stabile e quella di sviluppo, funzionano perfettamente con NvChad su Rocky Linux 9.
+Come si può vedere dall'estratto del comando qui sopra, è stata eseguita un'installazione della versione stabile. Entrambe le versioni, quella stabile e quella di sviluppo, funzionano perfettamente con NvChad su Rocky Linux 9.
 
 #### Disinstallare
 

@@ -28,7 +28,7 @@ shell > nmtui
 |Activate a connection||
 |Set system hostname||
 |Quit||
-||\<OK\>|
+||OK|
 
 * `nmcli`. Use the command line to configure the network, either a pure command line or an interactive command line.
 
@@ -56,7 +56,7 @@ This is because of the `udev` device manager. It supports many different naming 
 * Device names stay fixed even if you add or remove hardware, because no re-enumeration takes place.
 * Defective hardware can be seamlessly replaced.
 
-In RHEL 9 and the corresponding community version operating systems, consistent device naming is enabled by default (disabling is not supported). The `udev` device manager will generate device names according to the following scheme:
+In RHEL 9 and the corresponding community version operating systems, consistent device naming is enabled by default. The `udev` device manager will generate device names according to the following scheme:
 
 | Scheme  | Description | Example     |
 |---------|-------------|-------------|
@@ -76,11 +76,11 @@ In RHEL 9 and the corresponding community version operating systems, consistent 
 
 Add some suffixes to the prefix, such as:
 
-* **o<on-board_index_number>**
-* **s<hot_plug_slot_index_number>[f<function>][d<device_id>]**
-* **x<MAC_address>**
-* **[P<domain_number>]p<bus>s<slot>[f<function>][d<device_id>]**
-* **[P<domain_number>]p<bus>s<slot>[f<function>][u<usb_port>][…​][c<config>][i<interface>]**
+* **o** on-board_index_number
+* **s** hot_plug_slot_index_number **[f]** function **[d]** device_id
+* **x** MAC_address
+* **[P]** domain number **p** bus **s** slot **[f]** function **[d]** device_id
+* **[P]** domain number **p** buss **s** slot **[f]** function **[u]** usb port **[c]** config **[i]** interface
 
 You can use `man 7 systemd.net-naming-scheme` to get more detailed information. 
 
@@ -104,7 +104,7 @@ ipv6.method  disabled  autoconnect yes
 
 If you are using DHCP to get the ipv4 address, it can be:
 
-```
+```bash
 Shell > nmcli  connection  add  type ethernet con-name CONNECTION_NAME  ifname  NIC_DEVICE_NAME \
 ipv4.method  auto  ipv6.method  disabled  autoconnect  yes
 ```
@@ -148,7 +148,7 @@ Shell > nmcli  connection  add  type  bond-slave   ifname NIC_DEVICE_NAME2   mas
 
 You can view more detailed information through `man 5 NetworkManager.conf` and `man 5 nm-settings-nmcli`.
 
-For example, the content of the file is an ini style key file:
+The content of the configuration file of the NetwrokManager network card is an init-style key file. For example:
 
 ```bash
 Shell > cat /etc/NetworkManager/system-connections/ens160.nmconnection                                                               
@@ -185,7 +185,7 @@ method=disabled
 | id             | The alias of con-name, whose value is a string.|
 | uuid           | Universal unique identifier, whose value is a string. |
 | type           | The type of connection, whose values can be ethernet, bluetooth, vpn, vlan, and so on. You can use `man  nmcli` to view all supported types. |
-| interface-name | Network card device name. |
+| interface-name | The name of the network interface this connection is bound to, whose value is a string. |
 | timestamp      | Unix timestamp, in seconds. The value here is the number of seconds since January 1, 1970.|
 | autoconnect    | Whether it starts automatically when the system starts. The value is of Boolean type.|
 
@@ -206,4 +206,4 @@ method=disabled
 | addresses | |
 | gateway | |
 | dns |  |
-| method | The method to be obtained by ip. The value is of string type. The value can be: auto, disabled, link-local, manual, shared |
+| method | The method to be obtained by IP. The value is of string type. The value can be: auto, disabled, link-local, manual, shared |

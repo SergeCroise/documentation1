@@ -2,7 +2,7 @@
 title: Software Aggiuntivo
 author: Franco Colussi
 contributors: Steven Spencer, Franco Colussi
-tested with: 8.6, 9.0
+tested with: 8.7, 9.1
 tags:
   - nvchad
   - coding
@@ -16,7 +16,19 @@ Esistono diversi software aggiuntivi che, pur non essendo necessari, facilitano 
 
 `ripgrep` è uno strumento di ricerca orientato alla riga di comando che ricerca ricorsivamente la directory corrente per un modello di _regex_ (espressione regolare). Per impostazione predefinita, _ripgrep_ rispetta le regole di _gitignore_ e salta automaticamente i file/directory e i file binari nascosti. Ripgrep offre un eccellente supporto su Windows, macOS e Linux, con binari disponibili per ogni release.
 
-Ripgrep è un software scritto in _Rust_ ed è installabile con l'utilità `cargo`. Nota, tuttavia, che `cargo` non è installato dall'installazione predefinita di _rust_ quindi devi installarlo esplicitamente.
+### Installare RipGrep da EPEL
+
+In entrambi Rocky Linux 8 e 9, è possibile installare RipGrep dall'EPEL. Per farlo, installate la `epel-release`, aggiornate il sistema e quindi installate `ripgrep`:
+
+```
+sudo dnf install -y epel-release
+sudo dnf upgrade
+sudo dnf install ripgrep
+```
+
+### Installare RipGrep usando `cargo`
+
+Ripgrep è un software scritto in _Rust_ ed è installabile con l'utilità `cargo`. Si noti, tuttavia, che `cargo` non è installato dall'installazione predefinita di _rust_, quindi è necessario installarlo esplicitamente. Se si verificano errori con questo metodo, si può tornare all'installazione da EPEL.
 
 ```bash
 dnf install rust cargo
@@ -33,6 +45,8 @@ L'installazione salverà l'eseguibile `rg` nella cartella `~/.cargo/bin`, che è
 ```bash
 ln -s ~/.cargo/bin/rg ~/.local/bin/
 ```
+
+## Verificare RipGrep
 
 A questo punto possiamo verificare che tutto sia a posto con:
 

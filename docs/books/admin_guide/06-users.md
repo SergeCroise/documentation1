@@ -297,13 +297,19 @@ At creation, the account has no password and is locked.
 
 A password must be assigned to unlock the account.
 
-When the `useradd` command does not have any options, it appears:
+When invoking the `useradd` command without any options, the following default settings are set for the new user:
 
-* Create a home directory with the same name; 
-* Create a primary group with the same name;
-* The default shell is bash;
-* The user's `uid` and primary group `gid` are automatically recorded from 1000, and usually uid and gid are the same.
+* A home directory with the same name as the username is created; 
+* A primary group with the same name as the username is created;
+* A default shell that points to `/bin/bash` is assigned to the user;
+* The user's UID and primary group GID values are automatically deduced. This is usually a unique value between 1000 and 60,000.
 
+!!! note
+
+    The default settings and values are obtained from the following configuration files:
+
+    `/etc/login.defs` and `/etc/default/useradd`
+    
 ```bash
 Shell > useradd test1
 
@@ -320,9 +326,11 @@ test1:!::
 
 Account naming rules:
 
-* No accents, capital letters or special characters;
+* Lowercase letters, numbers and underscores are allowed, and other special characters such as asterisks, percent signs, full-width symbols are not accepted. 
+* Although you can use an uppercase user name in RockyLinux, we do not recommend it;
+* It is not recommended to start with numbers and underscores, although you may be allowed to do so;
 * Different from the name of an existing group or system file;
-* Optional: set the options `-u`, `-g`, `-d` and `-s` at creation.
+* The user name can contain up to 32 characters.
 
 !!! Warning
 
