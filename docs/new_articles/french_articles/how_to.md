@@ -28,3 +28,9 @@ Exemple:
 1. antoine/01_lab1.md sera copié vers docs/labs/01_lab1.fr.md
 2. antoine/01_lab1.en-US.md sera copié vers docs/labs/01_lab1.en-US.md et docs/labs/01_lab1.md
 3. Eventuellement le fichier sera renommé si besoin est.
+
+Remarque:
+
+Évitez d'écrire des articles longs.
+Créez plutôt plusieurs articles courts.
+Ainsi vous faciliterez la traduction des articles et rendrez la lecture plus agréable.
