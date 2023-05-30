@@ -25,6 +25,6 @@ Le but de cet article est de proposer un modèle pour écrire de nouveaux articl
    
 Exemple:
 
-1. 01_lab1.md sera copié vers docs/labs/01_lab1.fr.md
-2. 01_lab1.en-US.md sera copié vers docs/labs/01_lab1.en-US.md et docs/labs/01_lab1.md
+1. antoine/01_lab1.md sera copié vers docs/labs/01_lab1.fr.md
+2. antoine/01_lab1.en-US.md sera copié vers docs/labs/01_lab1.en-US.md et docs/labs/01_lab1.md
 3. Eventuellement le fichier sera renommé si besoin est.
