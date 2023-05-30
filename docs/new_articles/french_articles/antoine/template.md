@@ -1,0 +1,17 @@
+---
+title: Nouvel Article en français
+author: Antoine
+contributors: Jean Luc Pinchèvre
+tested on: 8.8
+tags: 
+  - i18n
+  - français
+  - rocky
+  - linux
+  - contribution
+  - documentation
+---
+
+# Exemple d'article écrit en français
+Le but de cet article est de proposer un modèle pour écrire de nouveaux articles ou bien restructurer des articles déjà existants.
+Est-ce qu'il existe encore des articles de formatux à intégrer dans la doc de Rocky?
