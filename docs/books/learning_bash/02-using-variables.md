@@ -2,7 +2,7 @@
 title: Bash - Using Variables
 author: Antoine Le Morvan
 contributors: Steven Spencer
-tested with: 8.5
+tested_with: 8.5
 tags:
   - education
   - bash scripting
@@ -165,7 +165,7 @@ The `set` command displays all used system variables.
 
 Among the dozens of environment variables, several are of interest to be used in a shell script:
 
-| Variables                        | Observations                                              |
+| Variables                        | Description                                              |
 |----------------------------------|-----------------------------------------------------------|
 | `HOSTNAME`                       | Host name of the machine.                                 |
 | `USER`, `USERNAME` and `LOGNAME` | Name of the user connected to the session.                |

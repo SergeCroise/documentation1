@@ -110,7 +110,7 @@ The commands we will use here are `tar` and `cpio`.
   * retains owners;
   * retains groups, dates and rights;
   * skips damaged files;
-  * complete file system.
+  * entire file system.
 
 !!! Note
 
@@ -204,7 +204,7 @@ $ tar cjf - /directory/to/backup/ | wc -c
 
 Here is an example of a naming convention for a `tar` backup, knowing that the date is to be added to the name.
 
-| keys    | Files   | Suffix           | Observation                                  |
+| keys    | Files   | Suffix           | Functionality                                |
 |---------|---------|------------------|----------------------------------------------|
 | `cvf`   | `home`  | `home.tar`       | `/home` in relative mode, uncompressed form  |
 | `cvfP`  | `/etc`  | `etc.A.tar`      | `/etc` in absolute mode, no compression      |
@@ -257,7 +257,7 @@ Example:
 
 | Key | Description                       |
 |-----|-----------------------------------|
-| `P` |	Create a backup in absolute mode. |
+| `P` |	Creates a backup in absolute mode. |
 
 
 !!! Warning
@@ -437,7 +437,7 @@ $ tar dfj file_name.tar.bz2
 
 #### Extract (_untar_) a backup
 
-Extract (_untar]_) a ``*.tar`` backup is done with the `xvf` keys:
+Extract (_untar_) a ``*.tar`` backup is done with the `xvf` keys:
 
 Extract the `etc/exports` file from the `/savings/etc.133.tar` backup into the `etc` directory of the active directory:
 
@@ -465,7 +465,7 @@ $ tar xvfP /backups/etc.133.P.tar
 
 | Key | 	Description                                       |
 |------|----------------------------------------------------|
-| `x`  |	Extract files from the backup, compressed or not. |
+| `x`  |	Extracts files from the backup, compressed or not. |
 
 
 Extracting a _tar-gzipped_ (`*.tar.gz`) backup is done with the `xvfz` keys:
@@ -521,7 +521,7 @@ $ tar xvfj backup.tar.bz2 /path/to/dir1/ /path/to/dir2/
 
 ##### Extract a group of files from a _tar_ backup using regular expressions (_regex_)
 
-Specify a _regex_ to extract the files matching the specified selection pattern.
+Specify a regular expression (_regex_) to extract the files matching the specified selection pattern.
 
 For example, to extract all files with the extension `.conf`:
 
@@ -546,8 +546,8 @@ To perform a backup with `cpio`, you have to specify a list of files to backup.
 
 This list is provided with the commands `find`, `ls` or `cat`.
 
-* `find` : browse a tree, recursive or not;
-* `ls` : list a directory, recursive or not;
+* `find` : browses a tree, recursive or not;
+* `ls` : lists a directory, recursive or not;
 * `cat` : reads a file containing the trees or files to be saved.
 
 !!! Note
@@ -596,7 +596,7 @@ Backup to a media:
 $ find /etc | cpio -ov > /dev/rmt0
 ```
 
-The support can be of several types:
+The media can be of several types:
 
 * tape drive: `/dev/rmt0`;
 * a partition: `/dev/sda5`, `/dev/hda5`, etc.
@@ -704,7 +704,7 @@ $ cpio -iv </backups/etc.152.cpio | less
 
 | Options                      | Description                                                         |
 |------------------------------|---------------------------------------------------------------------|
-| `-i`                         | Restore a complete backup.                                          |
+| `-i`                         | Restores a complete backup.                                          |
 | `-E file`                    | Restores only the files whose name is contained in file.            |
 | `--make-directories` or `-d` | Rebuilds the missing tree structure.                                |
 | `-u`                         | Replaces all files even if they exist.                              |

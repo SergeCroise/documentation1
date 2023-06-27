@@ -1,7 +1,7 @@
 ---
 title: File System
 author: Antoine Morvan
-contributors: Steven Spencer, tianci li, Serge Croise
+contributors: Steven Spencer, tianci li, Serge
 tags:
   - file system
   - system administration
@@ -102,7 +102,7 @@ sudo fdisk -l /dev/sdc2
 
 ### `parted` command
 
-The `parted` (_partition editor_) command is able to partition a disk, it solves the shortcomings of `fdisk`. We recommend that you use the `parted` command instead.
+The `parted` (_partition editor_) command is able to partition a disk without the drawbacks of `fdisk`.
 
 The `parted` command can be used either on the command-line or interactively. It also has a recovery function capable of rewriting a deleted partition table.
 
@@ -114,7 +114,7 @@ Under graphical interface, there is the very complete `gparted` tool: *G*nome *P
 
 The `gparted -l` command lists all logical devices on a computer.
 
-The `gparted` command alone will return to an interactive mode with its own internal options:
+The `gparted` command, when run without any arguments, will show an interactive mode with its internal options:
 
 * `help` or an incorrect command will display these options.
 * `print all` in this mode will have the same result as `gparted -l` on the command line.
@@ -159,7 +159,7 @@ The preparation, without _LVM_, of the physical media goes through five steps:
 
 ## Logical Volume Manager (LVM)
 
-**L**ogical **V**olume **M**anager (*LVM]*)
+**L**ogical **V**olume **M**anager (*LVM*)
 
 The partition created by the **standard partition** cannot dynamically adjust the resources of the hard disk, once the partition is mounted, the capacity is completely fixed, this constraint is unacceptable on the server. Although the standard partition can be forcibly expanded or shrunk through certain technical means, it is easy to cause data loss. LVM can solve this problem very well. LVM is available under Linux from kernel version 2.4, and its main features are:
 
@@ -291,9 +291,9 @@ lvcreate -- logical volume « /dev/volume1/VolLog1 » successfully created
 
 | Option    | Description                                                         |
 |-----------|---------------------------------------------------------------------|
-| `-L size` | Logical volume size in K, M or G.                                   |
-| `-n name` | LV name. Special file created in `/dev/name_volume` with this name. |
-| `-l  number`  | In addition to using the capacity unit of the hard disk, you can also use the number of PE. One PE equals 4MB. |
+| `-L size` | Sets the logical volume size in K, M or G.                                   |
+| `-n name` | Sets the LV name. Special file created in `/dev/name_volume` with this name. |
+| `-l  number`  | Sets the percentage of the capacity of the hard disk to use. You can also use the number of PE. One PE equals 4MB.  |
 
 !!! info
 
@@ -345,7 +345,7 @@ Example:
 
 ### Preparation of the physical media
 
-The preparation with LVM of the physical support is broken down as follows:
+The preparation with LVM of the physical support is broken down into the following:
 
 * Setting up the physical disk
 * Partitioning of the volumes
@@ -406,8 +406,8 @@ Boot sector is the first sector of bootable storage media, that is, 0 cylinder, 
 |   Item      |   Description |
 |   ---       |   ---         |
 |   MBR       | Stores the "boot loader"(or "GRUB"); load the kernel, pass parameters; provide a menu interface at boot time; transfer to another loader, such as when multiple operating systems are installed. |
-|   DPT       | Record the partition status of the entire disk.              |
-|   BRID      | Its function is to determine whether the device can be used to boot.               |
+|   DPT       | Records the partition status of the entire disk.              |
+|   BRID      | Determines whether the device is usable to boot.               |
 
 ### Super block
 
@@ -468,7 +468,7 @@ Its size corresponds to the rest of the available space of the partition. This a
 
 These tables are written to the hard disk when the system is shut down.
 
-!!! Danger
+!!! danger "Attention" 
 
     In the event of a sudden stop, the file system may lose its consistency and cause data loss.
 
@@ -519,7 +519,7 @@ Text document, directory, binary, partition, network resource, screen, keyboard,
 
 Linux meets the **FHS** (_Filesystems Hierarchy Standard_) (see `man hier`) which defines the names of folders and their roles.
 
-| Directory  | Observation                                                   | Abbreviation of               |
+| Directory  | Functionality                                                 | Abbreviation of               |
 |------------|---------------------------------------------------------------|-------------------------------|
 | `/`        | Contains special directories                                  |                               |
 | `/boot`    | Files related to system startup                               |                               |
@@ -530,7 +530,7 @@ Linux meets the **FHS** (_Filesystems Hierarchy Standard_) (see `man hier`) whic
 | `/usr`     | Everything that is not necessary for minimal system operation | _UNIX System Resources_       |
 | `/mnt`     | For mounting temporary SF                                     | _mount_                       |
 | `/media`   | For mounting removable media                                  |                               |
-| `/misc`    | Mount the shared directory of the NFS service.                |                               |
+| `/misc`    | For mounting the shared directory of the NFS service.                |                               |
 | `/root`    | Administrator's login directory                               |                               |
 | `/home`    | User data                                                     |                               |
 | `/tmp`     | Temporary files                                               | _temporary_                   |
@@ -616,8 +616,8 @@ Example:
 
 | Option | Description                                                                    |
 |--------|--------------------------------------------------------------------------------|
-| `-n`   | Mount without writing to `/etc/mtab`.                                          |
-| `-t`   | To indicate the type of file system to use.                                    |
+| `-n`   | Sets mount without writing to `/etc/mtab`.                                          |
+| `-t`   | Indicates the type of file system to use.                                    |
 | `-a`   | Mounts all filesystems mentioned in `/etc/fstab`.                              |
 | `-r`   | Mounts the file system read-only (equivalent to `-o ro`).                      |
 | `-w`   | Mounts the file system read/write, by default (equivalent `-o rw`).            |
@@ -644,10 +644,10 @@ Example:
 
 | Option | Description                                        |
 |--------|----------------------------------------------------|
-| `-n`   | Unmount without writing to `/etc/mtab`.            |
-| `-r`   | If unmount fails, remount as read-only.            |
-| `-f`   | Force unmount.                                     |
-| `-a`   | Unmount all filesystems mentioned in `/etc/fstab`. |
+| `-n`   | Sets mounting removal without writing to `/etc/mtab`.            |
+| `-r`   | Remounts as read-only if `umount` fails.            |
+| `-f`   | Forces mounting removal.                                     |
+| `-a`   | Removes mounts of all filesystems mentioned in `/etc/fstab`. |
 
 !!! Note
 
@@ -713,11 +713,11 @@ In the GNU/Linux world, there are seven file types:
 |:-----------:|--------------------------------------------------------------------------------------------------------------------------------------------|
 | **-**       | Represents a ordinary file. Including plain text files (ASCII); binary files (binary); data format files (data); various compressed files. |
 | **d**       | Represents a directory file. |
-| **b**       | Block device file. Including all kinds of hard drives, USB drives and so on. | 
-| **c**       | Character device file. Interface device of serial port, such as mouse, keyboard, etc. |
-| **s**       | Socket file. It is a file specially used for network communication. | 
-| **p**       | Pipe file. It is a special file type, the main purpose is to solve the errors caused by multiple programs accessing a file at the same time. FIFO is the abbreviation of first-in-first-out. |
-| **l**       | Soft link files, also called symbolic link files, are similar to shortcuts in Windows. Hard link file, also known as physical link file.| 
+| **b**       | Represents a block device file. Includes all kinds of hard drives, USB drives and so on. | 
+| **c**       | Represents a character device file. Interface device of serial port, such as mouse, keyboard, etc. |
+| **s**       | Represents a socket file. It is a file specially used for network communication. | 
+| **p**       | Represents a pipe file. It is a special file type. The main purpose is to solve the errors caused by multiple programs accessing a file at the same time. FIFO is the abbreviation of first-in-first-out. |
+| **l**       | Represents soft link files, also called symbolic link files, are similar to shortcuts in Windows. Hard link file, also known as physical link file.| 
 
 #### Supplementary description of directory
 
@@ -782,8 +782,8 @@ Their main features are:
 
 | Link types        | Description        | 
 | ---               | ---                |
-| soft link file    | A shortcut similar to Windows. It has permission of 777 and points to the original file. When the original file is deleted, the linked file and the original file are displayed in red.|
-| Hard link file    | The original file has the same _ inode_ number as the hard-linked file. They can be updated synchronously, including the contents of the file and when it was modified. Cannot cross partitions, cannot cross file systems. Cannot be used for directories. |
+| soft link file    | Represents a shortcut similar to Windows. It has permission of 777 and points to the original file. When the original file is deleted, the linked file and the original file are displayed in red.|
+| Hard link file    | Represents the original file. It has the same _ inode_ number as the hard-linked file. They can be updated synchronously, including the contents of the file and when it was modified. Cannot cross partitions, cannot cross file systems. Cannot be used for directories. |
 
 Specific examples are as follows:
 
@@ -962,7 +962,7 @@ This behavior is defined by the **default mask**.
 
 The principle is to remove the value defined by the mask at maximum rights without the execution right.
 
-For a directory :
+For a directory:
 
 ![How the SUID works](images/07-file-systems-017.png)
 

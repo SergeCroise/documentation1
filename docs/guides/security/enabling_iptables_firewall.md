@@ -2,7 +2,7 @@
 title: Enabling `iptables` Firewall
 author: Steven Spencer
 contributors: Ezequiel Bruni
-tested with: 8.5, 8.6, 9.0
+tested_with: 8.5, 8.6, 9.0
 tags:
  - security
  - iptables
@@ -17,7 +17,7 @@ tags:
 
 !!! warning "This Process Is Deprecated"
 
-    As of Rocky Linux 9.0, `iptables` and all of the utilities associated with it, are deprecated. This means that future releases of the OS will be removing `iptables`. For that reason, it is highly recommended that you not use this process. If you are familiar with iptables, we recommend using [`iptables` Guide To `firewalld`](firewalld.md). If you are new to firewall concepts, then we recommend [`firewalld` For Beginners](firewalld-beginners.md).
+    As of Rocky Linux 9.0, `iptables` and all of the utilities associated with it, are deprecated. This means that future releases of the OS will be removing `iptables`. For that reason, it is highly recommended that you do not use this process. If you are familiar with iptables, we recommend using [`iptables` Guide To `firewalld`](firewalld.md). If you are new to firewall concepts, then we recommend [`firewalld` For Beginners](firewalld-beginners.md).
 
 ## Introduction
 
@@ -25,7 +25,7 @@ _firewalld_ is now the default firewall on Rocky Linux. _firewalld_ **was** noth
 
 ## Disabling firewalld
 
-You can't really run the old _iptables_ utilities alongside _firewalld_. They're just not compatible. The best way to get around this is to disable _firewalld_ entirely (no need to unistall it unless you want to), and reinstall the _iptables_ utilities. Disabling _firewalld_ can be done using these commands:
+You can't really run the old _iptables_ utilities alongside _firewalld_. They're just not compatible. The best way to get around this is to disable _firewalld_ entirely (no need to uninstall it unless you want to) , and reinstall the _iptables_ utilities. Disabling _firewalld_ can be done using these commands:
 
 Stop _firewalld_:
 
@@ -41,7 +41,7 @@ Mask the service so that it can't be found:
 
 ## Installing And Enabling iptables Services
 
-Next we need to install the old _iptables_ services and utilities. This is done with the following:
+Next, we need to install the old _iptables_ services and utilities. This is done with the following:
 
 `dnf install iptables-services iptables-utils`
 

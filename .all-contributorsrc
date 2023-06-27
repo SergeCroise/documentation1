@@ -836,6 +836,24 @@
       "contributions": [
         "content"
       ]
+    },
+    {
+      "login": "andrewthiesen",
+      "name": "Andrew (AJ)",
+      "avatar_url": "https://avatars.githubusercontent.com/u/69650999?v=4",
+      "profile": "https://github.com/andrewthiesen",
+      "contributions": [
+        "content"
+      ]
+    },
+    {
+      "login": "qyecst",
+      "name": "qyecst",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13901864?v=4",
+      "profile": "https://www.qyecst.cn",
+      "contributions": [
+        "content"
+      ]
     }
   ],
   "contributorsPerLine": 7,

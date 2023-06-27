@@ -2,7 +2,7 @@
 title: XFCE Desktop 
 author: Gerard Arthus, Steven Spencer
 contributors: Steven Spencer, Antoine Le Morvan, K.Prasad
-tested with: 8.5, 8.6, 9.0
+tested_with: 8.5, 8.6, 9.0
 tags:
   - xfce
   - desktop
@@ -27,7 +27,7 @@ It is also one of the easiest desktop environments to combine with alternate win
 
     ## 9: Get, Verify, and Write the XFCE Live Image
 
-    Prior to installation, the first step is to download the live image and write that to a DVD or a USB thumb drive. As stated earlier, the image will be bootable, just like any other installation media for Linux. You can find the latest XFCE image in the download section for Rocky Linux 9 [live images](https://dl.rockylinux.org/pub/rocky/9.1/live/x86_64/). 
+    Prior to installation, the first step is to download the live image and write that to a DVD or a USB thumb drive. As stated earlier, the image will be bootable, just like any other installation media for Linux. You can find the latest XFCE image in the download section for Rocky Linux 9 [live images](https://dl.rockylinux.org/pub/rocky/9.2/live/x86_64/). 
     Note that this particular link assumes x86_64 is your processor's architecture. 
 	
 	As of this writing, you can use either x86_64 or aarch64 architectures for this live image. Download both the live image and checksum files. 

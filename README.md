@@ -1,6 +1,6 @@
 # Contribution Guide
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-91-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-93-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 
@@ -19,6 +19,21 @@ To us, excellent documentation hits these marks:
 
 We welcome anyone who wants to be part of this mission. No specific degree, years of experience, or company affiliation required. Be bold! We promise, you won’t break anything even if you fumble your first attempt.
 
+## License
+
+Documents written by the _rocky linux documentation team_ are published under the Creative Commons-BY-SA license. This means you are free to copy, distribute and transform the works, while respecting the author's rights.
+
+* **BY**: Attribution. You must cite the name of the original author.
+* **SA**: Share Alike.
+
+[Creative Commons-BY-SA license](https://creativecommons.org/licenses/by-sa/4.0/)
+
+The documents and their sources are freely downloadable from:
+
+* [https://docs.rockylinux.org](https://docs.rockylinux.org/)
+* [https://github.com/rocky-linux/documentation](https://github.com/rocky-linux/documentation)
+
+Our media sources are hosted at github.com. You'll find the source code repository where the version of this document was created.
 
 ## Technical requirements
 
@@ -313,7 +328,7 @@ Welcome aboard! Meet the rest of our awesome contributors below: ([emoji key](ht
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/bakerds"><img src="https://avatars.githubusercontent.com/u/16193241?v=4?s=100" width="100px;" alt="Dan Baker"/><br /><sub><b>Dan Baker</b></sub></a><br /><a href="#content-bakerds" title="Content">🖋</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/quartsize"><img src="https://avatars.githubusercontent.com/u/37243063?v=4?s=100" width="100px;" alt="Laura Hild"/><br /><sub><b>Laura Hild</b></sub></a><br /><a href="#content-quartsize" title="Content">🖋</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://git.sr.ht/%7Equartsize/"><img src="https://avatars.githubusercontent.com/u/37243063?v=4?s=100" width="100px;" alt="Laura Hild"/><br /><sub><b>Laura Hild</b></sub></a><br /><a href="#content-quartsize" title="Content">🖋</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Grammaresque"><img src="https://avatars.githubusercontent.com/u/119525559?v=4?s=100" width="100px;" alt="Grammaresque"/><br /><sub><b>Grammaresque</b></sub></a><br /><a href="#content-Grammaresque" title="Content">🖋</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/bdacus01"><img src="https://avatars.githubusercontent.com/u/22330436?v=4?s=100" width="100px;" alt="Brent Dacus"/><br /><sub><b>Brent Dacus</b></sub></a><br /><a href="#content-bdacus01" title="Content">🖋</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://sauveur.xyz"><img src="https://avatars.githubusercontent.com/u/7724090?v=4?s=100" width="100px;" alt="Rawk Akani"/><br /><sub><b>Rawk Akani</b></sub></a><br /><a href="#content-rawkakani" title="Content">🖋</a></td>
@@ -328,6 +343,10 @@ Welcome aboard! Meet the rest of our awesome contributors below: ([emoji key](ht
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Demalpheus"><img src="https://avatars.githubusercontent.com/u/28327241?v=4?s=100" width="100px;" alt="Travis W"/><br /><sub><b>Travis W</b></sub></a><br /><a href="#content-Demalpheus" title="Content">🖋</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://g.dev/rana_tej_singh"><img src="https://avatars.githubusercontent.com/u/58101587?v=4?s=100" width="100px;" alt="Tej Singh Rana"/><br /><sub><b>Tej Singh Rana</b></sub></a><br /><a href="#content-Tej-Singh-Rana" title="Content">🖋</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/captain-Arvoy"><img src="https://avatars.githubusercontent.com/u/99230514?v=4?s=100" width="100px;" alt="Aditya Roshan Dash"/><br /><sub><b>Aditya Roshan Dash</b></sub></a><br /><a href="#content-captain-Arvoy" title="Content">🖋</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/andrewthiesen"><img src="https://avatars.githubusercontent.com/u/69650999?v=4?s=100" width="100px;" alt="Andrew (AJ)"/><br /><sub><b>Andrew (AJ)</b></sub></a><br /><a href="#content-andrewthiesen" title="Content">🖋</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.qyecst.cn"><img src="https://avatars.githubusercontent.com/u/13901864?v=4?s=100" width="100px;" alt="qyecst"/><br /><sub><b>qyecst</b></sub></a><br /><a href="#content-qyecst" title="Content">🖋</a></td>
     </tr>
   </tbody>
 </table>

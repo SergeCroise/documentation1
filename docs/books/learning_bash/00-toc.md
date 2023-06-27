@@ -2,7 +2,7 @@
 title: Learning bash with Rocky
 author: Antoine Le Morvan
 contributors: Steven Spencer
-tested with: 8.5
+tested_with: 8.5
 tags:
   - education
   - bash scripting
@@ -21,7 +21,7 @@ It is a binary that is not part of the kernel, but forms an additional layer, he
 It parses the commands entered by the user and then executes them by the system.
 
 There are several shells, all of which share some common features.
-The user is free to use the one that suits him/her best. Some examples are:
+The user is free to use the one that suits them best. Some examples are:
 
 * the **Bourne-Again shell** (`bash`),
 * the **Korn shell** (`ksh`),

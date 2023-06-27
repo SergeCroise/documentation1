@@ -163,7 +163,7 @@ dnf install tree
 | `list all`                | Elenca i pacchetti già nel repository.                                      |
 | `search`                  | Cerca un pacchetto nel repository.                                          |
 | `provides */command_name` | Cerca un comando.                                                           |
-| `info`                    | Visualizza le informazioni sul pacchetto.                                   |
+| `info "Informazione"`     | Visualizza le informazioni sul pacchetto.                                   |
 | `autoremove`              | Rimuove tutti i pacchetti installati come dipendenze, ma non più necessari. |
 
 
@@ -415,7 +415,7 @@ Repo-pkgs          : 1,650
 Repo-available-pkgs: 1,107
 Repo-size          : 6.4 G
 Repo-mirrors       : https://mirrors.rockylinux.org/mirrorlist?arch=aarch64&repo=PowerTools-8
-Repo-baseurl       : https://mirror2.sandyriver.net/pub/rocky/8.7/PowerTools/x86_64/os/ (30 more)
+Repo-baseurl       : https://mirror2.sandyriver.net/pub/rocky/8.8/PowerTools/x86_64/os/ (30 more)
 Repo-expire        : 172,800 second(s) (last: Tue 22 Mar 2022 05:49:24 PM CET)
 Repo-filename      : /etc/yum.repos.d/Rocky-PowerTools.repo
 ...
@@ -926,7 +926,7 @@ Esempi:
 * Scaricare un file `.repo` e utilizzarlo:
 
 ```
-dnf config-manager --add-repo https://packages.centreon.com/ui/native/rpm-standard/23.04/el8/centreon-23.04.repo
+dnf config-manager --add-repo https://packages.centreon.com/ui/native/rpm-standard/23.04/el8/centreon-23.04.repo
 ```
 
 * È anche possibile impostare un url come url di base per un repo:
@@ -963,13 +963,13 @@ copr enable xxxx
 Scaricare il pacchetto rpm invece di installarlo:
 
 ```
-dnf download ansible
+dnf download ansible
 ```
 
 Se si vuole ottenere solo l'url della posizione remota del pacchetto:
 
 ```
-dnf download --url ansible
+dnf download --url ansible
 ```
 
 Oppure se si desidera scaricare anche le dipendenze:
@@ -1010,7 +1010,7 @@ Esempi:
 * Blocca la versione ansibile:
 
 ```
-dnf versionlock add ansible
+dnf versionlock add ansible
 Adding versionlock on: ansible-0:6.3.0-2.el9.*
 ```
 
