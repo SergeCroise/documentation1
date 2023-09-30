@@ -1,7 +1,7 @@
 ---
 title: Файлова система
 author: Antoine Le Morvan
-contributors: Steven Spencer, tianci li, Anna
+contributors: Steven Spencer, tianci li, Serge, Ganna Zhyrnova
 tags:
   - файлова система
   - адміністрування системи
@@ -217,7 +217,7 @@ $ sudo cfdisk /dev/sda
 
 |        Дія        |    PV     |    VG     |    LV     |
 |:-----------------:|:---------:|:---------:|:---------:|
-|    сканування     |  pcscan   |  vgscan   |  lvscan   |
+|    сканування     |  pvscan   |  vgscan   |  lvscan   |
 |     створення     | pvcreate  | vgcreate  | lvcreate  |
 |   відображення    | pvdisplay | vgdisplay | lvdisplay |
 |     видалення     | pvremove  | vgremove  | lvremove  |

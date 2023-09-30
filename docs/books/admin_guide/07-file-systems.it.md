@@ -1,7 +1,7 @@
 ---
 title: File system
 author: Antoine Morvan
-contributors: Steven Spencer, tianci li, Franco Colussi, Serge
+contributors: Steven Spencer, tianci li, Serge, Ganna Zhyrnova
 tags:
   - file system
   - system administration
@@ -217,7 +217,7 @@ I principali comandi rilevanti sono i seguenti:
 
 |        Elemento         |    PV     |    VG     |    LV     |
 |:-----------------------:|:---------:|:---------:|:---------:|
-|          scan           |  pcscan   |  vgscan   |  lvscan   |
+|          scan           |  pvscan   |  vgscan   |  lvscan   |
 |         create          | pvcreate  | vgcreate  | lvcreate  |
 |         display         | pvdisplay | vgdisplay | lvdisplay |
 |         remove          | pvremove  | vgremove  | lvremove  |

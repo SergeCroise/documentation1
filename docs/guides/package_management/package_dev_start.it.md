@@ -5,9 +5,9 @@ title: Guida al Packaging per Sviluppatori
 # Guida iniziale sul Packaging per sviluppatori
 
 
-Rocky Devtools si riferisce a un insieme di script e utilità create dai membri della comunità Rocky Linux per aiutare il sourcing, la creazione, il branding, il patching e la creazione di pacchetti software distribuiti con il sistema operativo Rocky Linux. Rocky devtools è composto da `rockyget`, `rockybuild`, `rockypatch`, e `rockyprep`.
+Rocky Devtools si riferisce a un insieme di script e utility create dai membri della comunità Rocky Linux per aiutare a reperire, creare, contrassegnare, patchare e costruire i pacchetti software distribuiti con il sistema operativo Rocky Linux. Rocky Devtools è costituito da `rockyget`, `rockybuild`, `rockypatch`, e `rockyprep`.
 
-A basso livello Rocky Devtools è un wrapper per l'esecuzione di alcuni programmi personalizzati e tradizionali, utilizzati per varie attività di gestione dei pacchetti. Rocky Devtools si basa molto su [`srpmproc`](https://github.com/mstg/srpmproc), `go`, `git`, e `rpmbuild`.
+A basso livello Rocky Devtools è un wrapper per l'esecuzione di alcuni programmi personalizzati e tradizionali per varie attività di gestione dei pacchetti. Rocky Devtools si basa molto su [`srpmproc`](https://github.com/mstg/srpmproc), `go`, `git`, e `rpmbuild`.
 
 Per installare e utilizzare Rocky devtools è necessario un sistema Linux moderno basato su RPM.
 
@@ -25,20 +25,20 @@ Scaricare il sorgente zippato di devtools dal seguente URL:
 
 https://github.com/rocky-linux/devtools/archive/refs/heads/main.zip
 
-Qui usiamo il comando `curl`:
+Qui si usa il comando `curl`:
 
 ```
 curl -OJL https://github.com/rocky-linux/devtools/archive/refs/heads/main.zip
 ```
 
-Ora dovresti avere un archivio zippato chiamato `devtools-main.zip`
+Ora si dovrebbe avere un archivio zippato chiamato `devtools-main.zip`
 
 
 ## 2. Installa Rocky Devtools
 
-Individuare e decomprimere l'archivio devtools che hai appena scaricato.
+Individuare e decomprimere l'archivio devtools appena scaricato.
 
-Qui useremo l'utilità a riga di comando `unzip`:
+In questo caso utilizzeremo l'utilità a riga di comando `unzip`:
 
 ```
 unzip devtools-main.zip
@@ -73,7 +73,7 @@ rockyget sed
 ```
 La prima volta che rockyget viene eseguito, crea automaticamente una struttura di directory che imita approssimativamente la struttura dei repository dei server di compilazione di Rocky. Ad esempio, la cartella `~/rocky/rpms` verrà creata automaticamente.
 
-Per il nostro esempio corrente di sed, i suoi sorgenti saranno memorizzati nella seguente cartella gerarchica di esempio:
+Per il nostro attuale esempio di sed, i suoi sorgenti saranno memorizzati nella seguente cartella gerarchica di esempio:
 
 ```
 ~rocky/rpms/sed/
@@ -89,7 +89,7 @@ Per il nostro esempio corrente di sed, i suoi sorgenti saranno memorizzati nella
 ```
 
 ### SUGGERIMENTO :
-Una volta che si hanno i sorgenti originali, potrebbe essere un buon momento per esaminare il file SPECs (`~rocky/rpms/sed/SPECS/specs.spec`) per cercare potenziali opportunità di debranding in un dato pacchetto. Il debranding può comprendere la sostituzione di grafica/loghi a monte e così via.
+Una volta che si hanno i sorgenti originali, potrebbe essere un buon momento per dare un'occhiata al file SPECs (`~rocky/rpms/sed/SPECS/specs.spec`) per cercare potenziali opportunità di debranding in un dato pacchetto. Il debranding può comprendere la sostituzione di grafica/loghi a monte e così via.
 
 ### SUGGERIMENTO
 Se state cercando altri pacchetti Rocky da compilare e sperimentare, potete consultare l'elenco dei pacchetti che attualmente non funzionano nell'ambiente di compilazione automatica di Rocky [qui](https://kojidev.rockylinux.org/koji/builds?state=3&order=-build_id) - https://kojidev.rockylinux.org/koji/builds?state=3&order=-build_id
@@ -99,13 +99,13 @@ Se state cercando altri pacchetti Rocky da compilare e sperimentare, potete cons
 
 Sotto il cofano, `rockybuild` chiama le utility `rpmbuild` e `mock` per costruire il pacchetto sorgente in un ambiente chroot per l'applicazione specificata nella riga di comando. Si basa sui sorgenti dell'applicazione e sul file RPM SPEC scaricato automaticamente tramite il comando `rockyget`.
 
-Usare `rockybuild` per creare l'utilità sed:
+Utilizzare `rockybuild` per creare l'utilità sed:
 
 ```
 rockybuild sed
 ```
 
-Il tempo necessario per completare il processo/fase di compilazione dipende dalle dimensioni e dalla complessità dell'applicazione che si sta cercando di compilare.
+Il tempo necessario per completare il processo/fase di compilazione dipende dalle dimensioni e dalla complessità dell'applicazione che si sta cercando di costruire.
 
 Al termine dell'esecuzione di `rockybuild`, un output simile a quello qui riportato indica che la compilazione è stata completata con successo.
 

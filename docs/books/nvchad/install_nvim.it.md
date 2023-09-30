@@ -1,7 +1,7 @@
 ---
 title: Installare Neovim
 author: Franco Colussi
-contributors: Steven Spencer, Franco Colussi
+contributors: Steven Spencer, Ganna Zhyrnova
 tested_with: 8.7, 9.1
 tags:
   - nvchad
@@ -19,7 +19,7 @@ Gli sviluppatori di Neovim hanno scelto Lua in quanto perfetto per l'incorporazi
 
 Dalla versione 0.5 Neovim include Treesitter (uno strumento per la generazione di parser) e supporta il Language Server Protocol (LSP). Questo riduce il numero di plugin necessari per ottenere funzioni di editing avanzate. Migliora le prestazioni di operazioni come il completamento del codice e il linting.
 
-Uno dei suoi punti di forza è la personalizzazione. Tutta la sua configurazione è contenuta in un unico file che può essere distribuito alle varie installazioni tramite sistemi di controllo di versione (Git o altro) in modo che siano sempre sincronizzate.
+Uno dei suoi punti di forza è la personalizzazione. Tutte le sue configurazioni sono contenute in un unico file che può essere distribuito alle varie installazioni attraverso sistemi di controllo di versione (Git o altro) in modo che siano sempre sincronizzate.
 
 ### Comunità di sviluppatori
 
@@ -39,7 +39,7 @@ Come per Vim, Neovim richiede una conoscenza di base dei suoi comandi e delle su
 
 ### Installazione da EPEL
 
-Prima di passare all'installazione di NvChad, dobbiamo assicurarci di avere a disposizione un'installazione di Neovim. Se non è già installato, è possibile installarlo dal repository EPEL. Il repository EPEL fornisce la versione minima richiesta da NvChad (attualmente 0.7.2). Nel caso in cui si voglia utilizzare una versione più recente, si consiglia l'installazione dal pacchetto precompilato o dal sorgente
+Prima di passare all'installazione di NvChad, dobbiamo assicurarci di avere a disposizione un'installazione di Neovim. Se non è già installato, è possibile installarlo dal repository EPEL. Il repository EPEL fornisce la versione minima richiesta da NvChad (attualmente 0.7.2). Nel caso in cui si voglia utilizzare una versione più recente, si consiglia l'installazione dal pacchetto precompilato o dal sorgente.
 
 Per installare la versione di Neovim fornita da EPEL, è necessario installare il repository stesso, se non lo si è già fatto.
 

@@ -1,8 +1,7 @@
 ---
 title: Automatic Template Creation - Packer - Ansible - VMware vSphere
 author: Antoine Le Morvan
-contributors: Steven Spencer, Ryan Johnson, Pedro Garcia
-update: Aug-26-2022
+contributors: Steven Spencer, Ryan Johnson, Pedro Garcia, Ganna Zhyrnova
 ---
 
 # Automatic template creation with Packer and deployment with Ansible in a VMware vSphere environment
@@ -14,12 +13,12 @@ update: Aug-26-2022
 
 ## Prerequisites, Assumptions, and General Notes
 
-* A vSphere environment available, and a user with granted access.
-* An internal web server to store files.
-* Web access to the Rocky Linux repositories.
-* An ISO of Rocky Linux.
-* An Ansible environment available.
-* It is assumed that you have some knowledge on each product mentioned. If not, dig into that documentation before you begin.
+* A vSphere environment is available, and a user with granted access
+* An internal web server to store files
+* Web access to the Rocky Linux repositories
+* An ISO of Rocky Linux
+* An Ansible environment is available
+* It is assumed that you have some knowledge of each product mentioned. If not, dig into that documentation before you begin.
 * Vagrant is **not** in use here. It was pointed out that with Vagrant, an SSH key that was not self-signed would be provided. If you want to dig into that you can do so, but it is not covered in this document.
 
 ## Introduction
@@ -32,18 +31,18 @@ Of course, you can adapt this how-to for other hypervisors.
 
 Although we are using the minimal ISO image here, you could choose to use the DVD image (much bigger and perhaps too big) or the boot image (much smaller and perhaps too small). This choice is up to you. It impacts in particular the bandwidth you will need for the installation, and thus the provisioning time. We will discuss next the impact of the default choice and how to remedy it.
 
-You can also choose not to convert the virtual machine into a template, in this case you will use Packer to deploy each new VM, which is still quite feasible (an installation starting from 0 takes less than 10 minutes without human interaction).
+You can also choose not to convert the virtual machine into a template. In this case you will use Packer to deploy each new VM, which is still quite feasible. An installation starting from 0 takes less than 10 minutes without human interaction.
 
 ## Packer
 
 ### Introduction to Packer
 
-Packer is an open-source virtual machine imaging tool, released under the MPL 2.0 license, and created by Hashicorp. It will help you automate the process of creating virtual machine images with pre-configured operating systems and installed software from a single source configuration in both, cloud and on-prem virtualized environments. 
+Packer is an open-source virtual machine imaging tool, released under the MPL 2.0 license, and created by HashiCorp. It will help you automate the process of creating virtual machine images with pre-configured operating systems and installed software from a single source configuration in both, cloud and on-prem virtualized environments. 
 
 With Packer you can create images to be used on the following platforms:
 
 * [Amazon Web Services](https://aws.amazon.com). 
-* [Azure](https://azure.microsoft.com).
+* [Azure](https://azure.microsoft.com/en-us/).
 * [GCP](https://cloud.google.com).
 * [DigitalOcean](https://www.digitalocean.com). 
 * [OpenStack](https://www.openstack.org).
@@ -60,7 +59,7 @@ You can have a look at these resources for additional information:
 
 There are two ways to install Packer on your Rocky Linux system.
 
-#### Installing Packer from the Hashicorp repo
+#### Installing Packer from the HashiCorp repo
 
 HashiCorp maintains and signs packages for different Linux distributions. To install packer in our Rocky Linux system, please follow the next steps:
 
@@ -73,7 +72,7 @@ HashiCorp maintains and signs packages for different Linux distributions. To ins
 $ sudo dnf install -y dnf-plugins-core
 ```
 
-2. Add the Hashicorp repository to the available repos in our Rocky Linux system:
+2. Add the HashiCorp repository to the available repos in our Rocky Linux system:
 
 ```bash
 $ sudo dnf config-manager --add-repo https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
@@ -88,9 +87,9 @@ $ sudo dnf -y install packer
 #### Download and install from the Packer website
 
 
-You can start by downloading the binaries for you own platform with [Packer downloads](https://www.packer.io/downloads).
+You can start by downloading the binaries for your own platform with [Packer downloads](https://www.packer.io/downloads).
 
-1. In the download page, copy the download link in the Linux Binary Download section that corresponds to your system architecture.
+1. On the download page, copy the download link in the Linux Binary Download section that corresponds to your system architecture.
 
 2. From a shell or terminal download it using ```wget``` tool:
 
@@ -105,9 +104,9 @@ This will download a .zip file.
 $ unzip packer_1.8.3_linux_amd64.zip
 ```
 
-!!! tip "Attention"
+!!! tip
 
-    If you get an error and you don’t have the unzip app installed on your system, you can install it by executing this command ```sudo dnf install unzip```
+    If you get an error and you don’t have the unzip app installed on your system, you can install it by executing this command ```sudo dnf install unzip```.
 
 4. Move the Packer app to the bin folder:
 
@@ -140,7 +139,9 @@ Available commands are:
 
 ### Template creation with Packer
 
-It is assumed that you are on Linux to perform the following tasks.
+!!! note "Note"
+
+    In the following examples, the assumption is that you are on a Linux system.
 
 As we will connect to a VMware vCenter Server to send our commands via Packer, we need to store our credentials outside the configuration files which we will create next.
 
@@ -240,7 +241,7 @@ We will also need our booting virtual machine to access a `ks.cfg` (Kickstart) f
 
 A Kickstart file contains the answers to the questions asked during the installation process. This file passes all its contents to Anaconda (the installation process), which allows you to fully automate the creation of the template.
 
-The author likes to store his `ks.cfg` file in an internal web server accessible from his template, but other possibilities exists that you may choose to use instead.
+The author likes to store his `ks.cfg` file in an internal web server accessible from his template, but other possibilities exist that you may choose to use instead.
 
 For example, the `ks.cfg` file is accessible from the VM at this URL in our lab: http://fileserver.rockylinux.lan/packer/rockylinux/8/ks.cfg. You would need to set up something similar to use this method.
 
@@ -303,13 +304,13 @@ This builder lets us configure the hardware we need:
   ],
 ```
 
-!!! Note
+!!! "Note"
 
     You will never forget again to include CPU_hot_plug as it is automatic now!
 
 You can do more cool things with the disk, cpu, etc. You should refer to the documentation if you are interested in making other adjustments.
 
-To start the installation, you need an ISO image of Rocky Linux. Here is an example of how to use an image located in a vSphere content library. You can of course store the ISO elsewhere, but in the case of a vSphere content library, you have to get the full path to the ISO file on the server hosting the Content Library (in this case it is a Synology, so directly on the DSM explorer).
+To start the installation, you need an ISO image of Rocky Linux. Here is an example of how to use an image located in a vSphere content library. You can of course store the ISO elsewhere. In the case of a vSphere content library, you have to get the full path to the ISO file on the server hosting the content library. In this case it is Synology, so directly on the DSM explorer.
 
 ```
   "iso_paths": [
@@ -319,7 +320,7 @@ To start the installation, you need an ISO image of Rocky Linux. Here is an exam
 
 Then you have to provide the complete command to be entered during the installation process: configuration of the IP and transmission of the path to the Kickstart response file.
 
-!!! Note
+!!! note "Note" 
 
     This example takes the most complex case: using a static IP. If you have a DHCP server available, the process will be much easier.
 
@@ -482,7 +483,7 @@ As we have chosen to use the minimal iso, instead of the Boot or DVD, not all re
 
 As Packer relies on VMware Tools to detect the end of the installation, and the `open-vm-tools` package is only available in the AppStream repos, we have to specify to the installation process that we want to use as source both the CD-ROM and this remote repo:
 
-!!! Note
+!!! "Note"
 
     If you do not have access to the external repos, you can use either a mirror of the repo, a squid proxy, or the DVD.
 
@@ -506,7 +507,7 @@ Remember we specified the user to connect via SSH with to Packer at the end of t
 rootpw mysecurepassword
 ```
 
-!!! Warning
+!!! warning
 
     You can use an insecure password here, as long as you make sure that this password will be changed immediately after the deployment of your VM, for example with Ansible.
 
@@ -529,7 +530,7 @@ logvol swap --fstype="swap" --size=4092 --name=lv_swap --vgname=vg_root
 
 The next section concerns the packages that will be installed. A "best practice" is to limit the quantity of installed packages to only those you need, which limits the attack surface, especially in a server environment.
 
-!!! Note
+!!! note
 
     The author likes to limit the actions to be done in the installation process and to defer installing what is needed in the post installation script of Packer. So, in this case, we install only the minimum required packages.
 
@@ -657,17 +658,17 @@ dnf -y install cloud-init
 echo "manual_cache_clean: True" > /etc/cloud/cloud.cfg.d/99-manual.cfg
 ```
 
-Since vSphere now uses cloud-init via the VMware Tools to configure the network of a centos8 guest machine, it must be installed. However, if you do nothing, the configuration will be applied on the first reboot and everything will be fine. But on the next reboot, cloud-init will not receive any new information from vSphere. In these cases, without information about what to do, cloud-init will reconfigure the VM's network interface to use DHCP, and you will lose your static configuration.
+Since vSphere now uses cloud-init via the VMware Tools to configure the network of a centos8 guest machine, it must be installed. However, if you do nothing, the configuration will be applied on the first reboot, and everything will be fine. But on the next reboot, cloud-init will not receive any new information from vSphere. In these cases, without information about what to do, cloud-init will reconfigure the VM's network interface to use DHCP, and you will lose your static configuration.
 
 As this is not the behavior we want, we need to specify to cloud-init not to delete its cache automatically, and therefore to reuse the configuration information it received during its first reboot and each reboot after that.
 
 For this, we create a file `/etc/cloud/cloud.cfg.d/99-manual.cfg` with the `manual_cache_clean: True` directive.
 
-!!! Note
+!!! note
 
     This implies that if you need to re-apply a network configuration via vSphere guest customizations (which, in normal use, should be quite rare), you will have to delete the cloud-init cache yourself.
 
-The rest of the script is commented and does not require more details
+The rest of the script is commented and does not require more details.
 
 You can check the [Bento project](https://github.com/chef/bento/tree/master/packer_templates) to get more ideas of what can be done in this part of the automation process.
 

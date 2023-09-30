@@ -1,61 +1,80 @@
+- - -
+title: LibreNMS Monitoring Server author: Steven Spencer contributors: Ezequiel Bruni, Ganna Zhyrnova tested_with: 8.5, 8.6, 9.0 tags:
+  - monitoring
+  - network
+- - -
+
 # LibreNMS Monitoring Server
 
 ## Introduzione
 
-Gli amministratori di rete e di sistema hanno quasi sempre bisogno di qualche forma di monitoraggio. Questo può includere il grafico dell'uso della larghezza di banda ai punti finali del router, il monitoraggio dell'up/down dei servizi in esecuzione su vari server e molto, molto di più. Ci sono molte opzioni di monitoraggio là fuori, ma un'opzione che è molto buona e ha molti, se non tutti, i componenti di monitoraggio disponibili sotto lo stesso tetto, è LibreNMS.
+Gli amministratori di rete e di sistema hanno quasi sempre bisogno di una forma di monitoraggio. Ciò può includere il grafico dell'utilizzo della larghezza di banda negli end point dei router, il monitoraggio dello stato dei servizi in esecuzione su vari server e molto altro ancora. Esistono molte opzioni di monitoraggio, ma una buona opzione con molti, se non tutti, i componenti di monitoraggio disponibili sotto lo stesso tetto, è LibreNMS.
 
-Questo documento vi farà solo iniziare con LibreNMS, ma vi indicheremo l'eccellente (ed estesa) documentazione del progetto per farvi andare oltre. Ci sono molte altre opzioni per il monitoraggio là fuori che questo autore ha usato prima, Nagios e Cacti sono due, ma LibreNMS offre quello che questi due progetti offrono individualmente, in un unico punto.
+Questo documento è solo un punto di partenza per LibreNMS. L'autore vi indicherà l'eccellente (ed estesa) documentazione del progetto per ulteriori opzioni. L'autore ha utilizzato molte altre soluzioni di monitoraggio, tra cui Nagios e Cacti, ma LibreNMS offre ciò che questi due progetti offrono singolarmente in un unico prodotto.
 
-Mentre l'installazione seguirà abbastanza da vicino le istruzioni ufficiali di installazione che si trovano [qui](https://docs.librenms.org/Installation/Install-LibreNMS/), abbiamo aggiunto alcune spiegazioni e anche alcuni cambiamenti minori, che rendono questa procedura preferibile a quell'eccellente documento.
+L'installazione seguirà fedelmente le [istruzioni di installazione ufficiali](https://docs.librenms.org/Installation/Install-LibreNMS/).  Le spiegazioni e le piccole modifiche apportate alla procedura rendono questa procedura preferibile a quell'eccellente documento.
 
-## Prerequisiti, Presupposti e Convenzioni
+## Prerequisiti, presupposti e convenzioni
 
-* Un server o un container (sì, LibreNMS funzionerà in un container, tuttavia se avete molto da monitorare, la cosa migliore sarebbe installarlo sul proprio hardware) con Rocky Linux. Tutti i comandi presuppongono una nuova installazione di Rocky Linux.
-* Presupposto: sei in grado di eseguire comandi come root o puoi farlo con _sudo_
-* Conoscenza operativa degli strumenti a riga di comando, compresi gli editor, come _vi_
-* Si presume l'uso di SNMP v2. Se volete usare SNMP v3, è supportato da LibreNMS e funzionerà. Dovrete solo cambiare la configurazione e le opzioni SNMP sui vostri dispositivi per adattarli alla v3.
-* Mentre abbiamo incluso la procedura SELinux in questo documento, il container che stiamo usando nel laboratorio non la include di default. Per questo motivo, la procedura SELinux **non** è stata testata in laboratorio.
-* In tutto questo documento, gli esempi usano l'editor _vi_ come menzionato. Quando il documento dice di salvare le modifiche e uscire, questo viene fatto con `SHIFT:wq!`
-* Sono richieste alcune capacità di risoluzione dei problemi, tra cui il monitoraggio dei registri, i test sul web e altro.
+* Un server o un container (sì, LibreNMS può essere eseguito in un container. Se si devono monitorare molte cose, la scelta migliore è quella di installare su un hardware indipendente) con Rocky Linux. Tutti i comandi presuppongono una nuova installazione di Rocky Linux.
+* Presupposto: che si possano eseguire i comandi come root o che si sia in grado di usare _sudo_ per elevare i privilegi
+* Conoscenza di strumenti a riga di comando, inclusi editor di testo come _vi_
+* Presupposto: l'uso di SNMP v2. Se si desidera utilizzare SNMP v3, LibreNMS lo supporta e funzionerà. È necessario modificare la configurazione e le opzioni SNMP dei dispositivi per adeguarli alla versione v3.
+* È inclusa la procedura SELinux. Il container utilizzato dall'autore nel laboratorio non lo include per impostazione predefinita. Per questo motivo, la procedura SELinux **non** è stata testata in laboratorio.
+* In questo documento, gli esempi utilizzano l'editor _vi_. Quando il documento dice di salvare le modifiche e di uscire, usare <kbd>SHIFT</kbd>+<kbd>:</kbd>+<kbd>wq!</kbd>.
+* La procedura richiede alcune competenze in materia di risoluzione dei problemi, tra cui il monitoraggio dei log, i test web e altro ancora
 
 ## Installazione dei pacchetti
 
-Questi comandi dovrebbero essere inseriti come utente root. Prima di iniziare, notate che questa procedura di installazione si concentra su httpd, piuttosto che su nginx. Se preferisci usare quest'ultimo, vai su [Librenms Install Instructions](https://docs.librenms.org/Installation/Install-LibreNMS/) e segui la guida lì. Stiamo assumendo una nuova installazione, quindi abbiamo bisogno di fare alcune cose con i repository prima di poter continuare. Per prima cosa, dobbiamo installare il repository EPEL (Extra Packages for Enterprise Linux):
+Inserire questi comandi come utente root. Prima di iniziare, si noti che questa procedura di installazione si concentra su *httpd*, piuttosto che su *nginx*. Se preferite quest'ultima, seguite le [Istruzioni per l'installazione di Librenms](https://docs.librenms.org/Installation/Install-LibreNMS/) e la guida.
 
-`dnf install -y epel-release`
-
-Successivamente, dobbiamo dire ai repository di abilitare PHP 7.3 come PHP predefinito:
+Per prima cosa, installare il repository EPEL (Extra Packages for Enterprise Linux):
 
 ```
-dnf module reset php
-dnf module enable php:7.3
+dnf install -y epel-release
 ```
 
-Questo restituirà un elenco per httpd, nginx e php, basta rispondere "y" al prompt per continuare. Successivamente, abbiamo bisogno di installare un po' di pacchetti:
+La versione attuale di LibreNMS richiede una versione minima di PHP pari a 8.1. Rocky Linux 9.0 utilizza PHP 8.0. Abilitare un repository di terze parti (anche in Rocky Linux 8.6) per questa nuova versione.
 
-`dnf install bash-completion cronie fping git httpd ImageMagick mariadb-server mtr net-snmp net-snmp-utils nmap php-fpm php-cli php-common php-curl php-gd php-json php-mbstring php-process php-snmp php-xml php-zip php-mysqlnd python3 python3-PyMySQL python3-redis python3-memcached python3-pip python3-systemd rrdtool unzip`
+La versione del repository da installare dipende dalla versione di Rocky Linux in uso. L'ipotesi è che si tratti della versione 9, ma si può modificare di conseguenza in base alla versione in uso:
 
-Tutti questi pacchetti rappresentano una parte del set di funzionalità di LibreNMS.
+```
+dnf install http://rpms.remirepo.net/enterprise/remi-release-9.rpm
+```
 
-## Impostare l'Utente Librenms
+Una volta installati i repository EPEL e REMI, è il momento di installare i pacchetti:
 
-Per farlo, copiate e incollate (o scrivete) quanto segue:
+```
+dnf install bash-completion cronie fping git httpd ImageMagick mariadb-server mtr net-snmp net-snmp-utils nmap php81-php-fpm php81-php-cli php81-php-common php81-php-curl php81-php-gd php81-php-json php81-php-mbstring php81-php-process php81-php-snmp php81-php-xml php81-php-zip php81-php-mysqlnd python3 python3-PyMySQL python3-redis python3-memcached python3-pip python3-systemd rrdtool unzip wget
+```
 
-`useradd librenms -d /opt/librenms -M -r -s "$(which bash)"`
+Tutti questi pacchetti rappresentano una parte delle funzionalità di LibreNMS.
 
-Con questo comando, stiamo impostando la directory predefinita per il nostro nuovo utente su "/opt/librenms", tuttavia l'opzione "-M" dice "non creare la directory". Il motivo, naturalmente, è che la creeremo quando installeremo libreNMS. La "-r" dice di rendere questo utente un account di sistema e la "-s" dice di impostare la shell (in questo caso, a "bash")
+## Impostazione dell'utente 'librenms'
 
-## Scaricare LibreNMS e Impostare i Permessi
+Copiare e incollare (o inserire) quanto segue:
 
-Il download avviene tutto tramite git. Dovreste avere familiarità con il processo, dato che è usato per molti progetti in questi giorni. Per prima cosa, passate alla directory /opt:
+```
+useradd librenms -d /opt/librenms -M -r -s "$(which bash)"
+```
 
-`cd /opt`
+Questo comando imposta la directory predefinita per l'utente a `/opt/librenms`, tuttavia l'opzione `-M` dice "non creare la directory." Il motivo è che ciò avviene al momento dell'installazione di LibreNMS. Il `-r` dice di rendere questo utente un account di sistema e il `-s` dice di impostare la shell (in questo caso, "bash").
 
-Quindi clonate il repository:
+## Scaricare LibreNMS e impostare i permessi
 
-`git clone https://github.com/librenms/librenms.git`
+Git facilita il download. Forse conoscete già il processo. Per prima cosa, passate alla directory `/opt`:
 
-Poi cambiate i permessi per la directory:
+```
+cd /opt
+```
+
+Clonare il repository:
+
+```
+git clone https://github.com/librenms/librenms.git
+```
+
+Modificare le autorizzazioni per la directory:
 
 ```
 chown -R librenms:librenms /opt/librenms
@@ -64,73 +83,86 @@ setfacl -d -m g::rwx /opt/librenms/rrd /opt/librenms/logs /opt/librenms/bootstra
 setfacl -R -m g::rwx /opt/librenms/rrd /opt/librenms/logs /opt/librenms/bootstrap/cache/ /opt/librenms/storage/
 ```
 
-Il comando _setfacl_ sta per "set file access control lists" ed è un altro modo per mettere al sicuro directory e file.
+Il comando `setfacl` sta per "set file access control lists" ed è un altro modo per proteggere directory e file.
 
-## Installare le dipendenze di PHP Come librenms
+## Installare le dipendenze di PHP come `librenms`
 
-Tutti i comandi precedenti sono stati eseguiti come root o _sudo_, ma le dipendenze PHP all'interno di LibreNMS devono essere installate come utente librenms. Per fare questo,
-
-`su - librenms`
-
-E poi inserisci il seguente:
-
-`./scripts/composer_wrapper.php install --no-dev`
-
-Una volta che lo script è completato, uscite di nuovo a root:
-
-`exit`
-
-### Fallimento dell'Installazione delle Dipendenze di PHP Soluzione Alternativa
-
-La documentazione di LibreNMS dice che quando si è dietro un server proxy, la procedura di cui sopra può fallire. Se è così, usate questa procedura come soluzione alternativa. Notate anche che questa soluzione alternativa dovrebbe essere eseguita come utente root, perché apporta modifiche a /usr/bin:
+Le dipendenze PHP di LibreNMS devono essere installate con l'utente `librenms`. A tal fine, eseguire:
 
 ```
-wget https://getcomposer.org/composer-stable.phar
-mv composer-stable.phar /usr/bin/composer
-chmod +x /usr/bin/composer
+su - librenms
 ```
 
-## Impostare il Fuso Orario
+Inserire quanto segue:
 
-Dobbiamo assicurarci che questo sia impostato correttamente, sia per il sistema che per PHP. Puoi trovare una lista di impostazioni di fuso orario valide per PHP [qui](https://php.net/manual/en/timezones.php). Per esempio, per il fuso orario italiano, una voce comune sarebbe "Europe/Rome". Iniziamo modificando il file php.ini:
+```
+./scripts/composer_wrapper.php install --no-dev
+```
 
-`vi /etc/php.ini`
+Uscire di nuovo a root:
 
-Trovate la linea `date.timezone` e modificatela. Nota che è commentato, quindi rimuovi il ";" dall'inizio della linea e aggiungi il tuo fuso orario dopo il segno "=". Per il nostro esempio di fuso orario italiano useremo:
+```
+exit
+```
 
-`date.timezone = Europe/Rome`
+### Errore nell'installazione delle dipendenze di PHP
 
-Salvate le modifiche e uscite dal file php.ini.
+La documentazione di LibreNMS dice che la procedura di cui sopra potrebbe fallire se ci si trova dietro un server proxy. Può fallire anche per altri motivi. Per questo motivo, la procedura di installazione di Composer viene descritta più avanti.
 
-Dobbiamo anche assicurarci che il fuso orario del sistema sia corretto. Di nuovo, usando il nostro fuso orario italiano come esempio, lo faremmo con:
+## Impostare il fuso orario
 
-`timedatectl set-timezone Europe/Rome`
+È necessario assicurarsi che l'impostazione sia corretta per il sistema e per PHP. È possibile trovare un elenco di [impostazioni valide del fuso orario per PHP qui](https://php.net/manual/en/timezones.php). Ad esempio, per il fuso orario Central, una voce comune è "America/Chicago". Iniziate modificando il file `php.ini`:
+
+```
+vi /etc/opt/remi/php81/php.ini
+```
+
+Trovare la riga `date.timezone` e modificarla. Si noti che è annotato, quindi rimuovere il ";" dall'inizio della riga e aggiungere il proprio fuso orario dopo il segno "=". Per l'esempio del fuso orario Central utilizzare:
+
+```
+date.timezone = America/Chicago
+```
+
+Salvare le modifiche e uscire dal file `php.ini`.
+
+È inoltre necessario assicurarsi che il fuso orario del sistema sia corretto. Utilizzando l'esempio del fuso orario Central, eseguire questa operazione con:
+
+```
+timedatectl set-timezone America/Chicago
+```
 
 ## Impostazione di MariaDB
 
-Prima di addentrarci nella configurazione del database necessaria per LibreNMS, eseguite la procedura [MariaDB](../database/database_mariadb-server.md) e in particolare la sezione "Securing mariadb-server", e poi tornate qui per queste impostazioni specifiche. La prima cosa che dobbiamo fare è modificare il file mariadb-server.cnf:
+Prima di avviare i requisiti del database per LibreNMS, eseguire la procedura [MariaDB](../database/database_mariadb-server.md), in particolare la sezione "Messa in sicurezza di mariadb-server", e tornare qui per queste impostazioni specifiche. Modificare il file `mariadb-server.cnf`:
 
-`vi /etc/my.cnf.d/mariadb-server.cnf`
+```
+vi /etc/my.cnf.d/mariadb-server.cnf
+```
 
-E aggiungere le seguenti righe alla sezione "[Mysqld]":
+Aggiungere le seguenti righe alla sezione "[Mysqld]":
 
 ```
 innodb_file_per_table=1
 lower_case_table_names=0
 ```
 
-Poi abilitare e riavviare il server mariadb:
+Quindi attivare e riavviare il server `mariadb`:
 
 ```
 systemctl enable mariadb
 systemctl restart mariadb
 ```
 
-Ora ottenete l'accesso a mariadb come utente root. Ricordatevi di usare la password che avete creato seguendo la sezione "Proteggere mariadb-server" che avete eseguito sopra:
+Accedere a `mariadb` come utente root. Ricordarsi di utilizzare la password creata seguendo la sezione "Messa in sicurezza di mariadb-server" eseguita in precedenza:
 
-`mysql -u root -p`
 
-La prossima cosa che dobbiamo fare è fare alcune modifiche specifiche per LibreNMS. Con il comando qui sotto, ricordatevi di cambiare la password "password" con qualcosa di sicuro e documentatelo in un posto sicuro, come un gestore di password, in modo da riaverlo in seguito. Nel prompt di mysql fare:
+```
+mysql -u root -p
+```
+
+Apportare alcune modifiche specifiche per LibreNMS. Con il comando sottostante, ricordatevi di cambiare la password "password" con qualcosa di sicuro e di documentarlo in un luogo sicuro.
+
+Al prompt di `mysql` eseguire:
 
 ```
 CREATE DATABASE librenms CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -139,51 +171,52 @@ GRANT ALL PRIVILEGES ON librenms.* TO 'librenms'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
-Una volta fatto questo, digitate "exit" per uscire di nuovo da mariadb.
+Digitare "exit" per uscire da `mariadb`.
 
 ## Configurare PHP-FPM
 
-Questa sezione è sostanzialmente invariata rispetto alla documentazione ufficiale. Per prima cosa, copiate il www.conf:
-
-`cp /etc/php-fpm.d/www.conf /etc/php-fpm.d/librenms.conf`
-
-Quindi modificate il file librenms.conf:
-
-`vi /etc/php-fpm.d/librenms.conf`
-
-Vicino alla parte superiore, aggiungete queste due righe per risolvere un problema di percorso per l'utente librenms che verrà fuori in seguito:
+Questo non è cambiato rispetto alla documentazione ufficiale, tranne che per il percorso dei file. Per prima cosa, copiare il file `www.conf`:
 
 ```
-; Set the ENV path to fix broken Centos web page issue
-env[PATH] = /usr/local/bin:/usr/bin:/bin
+cp /etc/opt/remi/php81/php-fpm.d/www.conf /etc/opt/remi/php81/php-fpm.d/librenms.conf
 ```
 
-Cambiate "[www]" con ["librenms]"
+Modificare il file `librenms.conf`:
 
-Cambia l'utente e il gruppo in "librenms":
+```
+vi /etc/opt/remi/php81/php-fpm.d/librenms.conf
+```
+
+Cambiare "[www]" con ["librenms]"
+
+Cambiare l'utente e il gruppo in "librenms":
 
 ```
 user = librenms
 group = librenms
 ```
 
-E infine cambiate la linea "listen" per riflettere un nome univoco:
+Modificare la riga "listen" in modo che rifletta un nome univoco:
 
-`listen = /run/php-fpm-librenms.sock`
+```
+listen = /run/php-fpm-librenms.sock
+```
 
-Salvare le modifiche e uscire dal file. Se questo è l'unico servizio web che verrà eseguito su questa macchina, sentitevi liberi di rimuovere il vecchio file www.conf che abbiamo copiato:
+Salvare le modifiche e uscire dal file. Se questo è l'unico servizio web che verrà eseguito su questa macchina, si può rimuovere il vecchio file www.conf copiato:
 
-`rm -f /etc/php-fpm.d/www.conf`
+```
+rm -f /etc/opt/remi/php81/php-fpm.d/www.conf
+```
 
-## Configurare Apache
+## Configurare `httpd`
 
-Normalmente, useremmo la procedura [Multi-Sito Apache](../web/apache-sites-enabled.md) per impostare qualsiasi servizio web, ma in questo caso, stiamo solo andando con la configurazione predefinita. Notate che se volete usare questa procedura, dovete semplicemente mettere il file di configurazione in /etc/httpd/sites-available e poi seguire la procedura per collegarlo a sites-enabled. La radice predefinita del documento, tuttavia, **non** sarebbe /var/www/sub-domains/librenms/html, ma invece sarebbe /opt/librenms/html.
+Iniziate creando questo file:
 
-Di nuovo, in questo caso non stiamo usando quella procedura e andiamo solo con la configurazione predefinita e suggerita. Per farlo, iniziate creando questo file:
+```
+vi /etc/httpd/conf.d/librenms.conf
+```
 
-`vi /etc/httpd/conf.d/librenms.conf`
-
-E mettendo il seguente in quel file:
+Inserite in quel file quanto segue:
 
 ```
 <VirtualHost *:80>
@@ -208,27 +241,32 @@ E mettendo il seguente in quel file:
 </VirtualHost>
 ```
 
-Dovresti anche rimuovere il vecchio sito predefinito, welcome.conf:
+È necessario rimuovere il vecchio sito predefinito, `welcome.conf`:
 
-`rm /etc/httpd/conf.d/welcome.conf`
+```
+rm /etc/httpd/conf.d/welcome.conf
+```
 
-Infine, dobbiamo abilitare sia _httpd_ che _php-fpm_:
+Abilitare  `httpd` and `php-fpm`:
 
 ```
 systemctl enable --now httpd
-systemctl enable --now php-fpm
+systemctl enable --now php81-php-fpm
 ```
+
 ## SELinux
 
-Notate che se non pensate di usare SELinux, saltate questo punto e andate alla prossima sezione. Questo potrebbe anche applicarsi se voi usate LibreNMS su un container che non supporta SELinux a livello di container, o non lo include di default.
+Se non si intende utilizzare SELinux, passare alla sezione successiva. Questo potrebbe valere anche per chi usa LibreNMS su un container che non supporta SELinux a livello di container o non lo include per default.
 
-Per impostare tutto con SELinux, avrete bisogno di un pacchetto aggiuntivo installato:
+Per configurare tutto con SELinux, è necessario installare un pacchetto aggiuntivo:
 
-`dnf install policycoreutils-python-utils`
+```
+dnf install policycoreutils-python-utils
+```
 
-### Configurare i Contesti LibreNMS
+### Configurare i contesti LibreNMS
 
-Avrete bisogno di impostare i seguenti contesti perché LibreNMS funzioni correttamente con SELinux:
+Affinché LibreNMS funzioni correttamente con SELinux, è necessario impostare i seguenti contesti:
 
 ```
 semanage fcontext -a -t httpd_sys_content_t '/opt/librenms/html(/.*)?'
@@ -239,9 +277,9 @@ setsebool -P httpd_execmem 1
 chcon -t httpd_sys_rw_content_t /opt/librenms/.env
 ```
 
-### Permettere il fping
+### Permettere il `fping`
 
-Create un file chiamato `http_fping.tt` ovunque e sarà installato tramite un comando più tardi. Il contenuto di questo file è:
+Creare un file chiamato `http_fping.tt` in un percorso qualsiasi. Non importa dove. L'installazione avviene successivamente. Il contenuto di questo file è:
 
 ```
 module http_fping 1.0;
@@ -256,208 +294,245 @@ class rawip_socket { getopt create setopt write read };
 allow httpd_t self:capability net_raw;
 allow httpd_t self:rawip_socket { getopt create setopt write read };
 ```
-Ora installate il contenuto di questo file con i seguenti comandi:
+
+Installate questo file con i seguenti comandi:
 
 ```
 checkmodule -M -m -o http_fping.mod http_fping.tt
 semodule_package -o http_fping.pp -m http_fping.mod
 semodule -i http_fping.pp
 ```
-Se incontrate problemi e sospettate che possano essere dovuti a un problema di SELinux, eseguite quanto segue:
 
-`audit2why < /var/log/audit/audit.log`
+Se si verificano problemi e si sospetta che possano essere dovuti a un problema di SELinux, eseguire quanto segue:
 
-## Configurazione del firewall
+```
+audit2why < /var/log/audit/audit.log
+```
 
-Includeremo le istruzioni di _firewalld_ dalla documentazione ufficiale, tuttavia useremo _iptables_ nel laboratorio, quindi includeremo anche quelle istruzioni. Per usare _iptables_ seguite semplicemente [questa procedura](../security/enabling_iptables_firewall.md) e poi usate lo script _iptables_ trovato in questa procedura, e fate delle modifiche per la vostra rete.
+## configurazione di `firewalld`
 
-### firewalld
+Le istruzioni di `firewalld` seguono la documentazione ufficiale.
 
-Il comando da usare per consentire le regole _firewalld_ è il seguente:
+Il comando da utilizzare per le regole di autorizzazione di `firewalld` è il seguente:
 
 ```
 firewall-cmd --zone public --add-service http --add-service https
 firewall-cmd --permanent --zone public --add-service http --add-service https
 ```
+L'autore ha problemi con questo semplicistico insieme di regole `firewalld`. Questa regola permette ai servizi web di essere aperti al mondo, ma è questo che si vuole per un server di monitoraggio?
 
-L'autore ha problemi con la natura semplicistica di _firewalld_. Questa regola permette ai vostri servizi web di essere aperti al mondo, ma è quello che volete per un server di monitoraggio?  Direi che di solito **non** è così. Preferisco le regole di _iptables_, perché è facile vedere a colpo d'occhio ciò che si permette.
+Di solito **non** è questo il caso. Se si desidera un approccio più granulare all'uso di `firewalld`, consultare [questo documento](../security/firewalld.md) e modificare di conseguenza le regole di `firewalld`.
 
-### iptables
+## Abilitare i collegamenti simbolici e il completamento automatico delle schede per i comandi `lnms`
 
-Creare uno script da eseguire per aggiungere e modificare le regole del firewall chiamato firewall.conf e metterlo in /etc
-
-`vi /etc/firewall.conf`
-
-Inserite nel file quanto segue, sostituendo gli indirizzi IP della vostra rete come necessario. Questo script permette UDP, SSH, HTTP e HTTPS dalla rete locale del laboratorio, 192.168.1.0/24. Permette anche ICMP tipo 8 (che sta per "Echo Request" o più comunemente "ping") dal nostro gateway di rete, 192.168.1.2:
+Innanzitutto, è necessario un collegamento simbolico al comando `lnms`, in modo da poterlo eseguire da qualsiasi punto:
 
 ```
-#!/bin/sh
-#
-#IPTABLES=/usr/sbin/iptables
-
-#  Unless specified, the defaults for OUTPUT is ACCEPT
-#    The default for FORWARD and INPUT is DROP
-#
-echo "   clearing any existing rules and setting default policy.."
-iptables -F INPUT
-iptables -P INPUT DROP
-iptables -A INPUT -p udp -m udp -s 192.168.1.0/24 -j ACCEPT
-iptables -A INPUT -p tcp -m tcp -s 192.168.1.0/24 --dport 22 -j ACCEPT
-iptables -A INPUT -p tcp -m tcp -s 192.168.1.0/24 --dport 80 -j ACCEPT
-iptables -A INPUT -p tcp -m tcp -s 192.168.1.0/24 --dport 443 -j ACCEPT
-iptables -A INPUT -p icmp -m icmp --icmp-type 8 -s 192.168.1.2 -j ACCEPT
-iptables -A INPUT -i lo -j ACCEPT
-iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
-iptables -A INPUT -p tcp -j REJECT --reject-with tcp-reset
-iptables -A INPUT -p udp -j REJECT --reject-with icmp-port-unreachable
-
-/usr/sbin/service iptables save
+ln -s /opt/librenms/lnms /usr/bin/lnms
 ```
 
-Rendere lo script eseguibile:
+Quindi, impostare il completamento automatico:
 
-`chmod +x /etc/firewall.conf`
+```
+cp /opt/librenms/misc/lnms-completion.bash /etc/bash_completion.d/
+```
 
-Eseguire lo script:
+## Configurare `snmpd`
 
-`/etc/firewall.conf`
+_SNMP_ è l'acronimo di "Simple Network Management Protocol" ed è utilizzato da molti programmi di monitoraggio per l'estrazione dei dati. La versione 2, utilizzata in questo caso, richiede una "community string" specifica per il vostro ambiente.
 
-Supponendo che non ci siano errori, dovresti essere pronto a partire.
+Assegnate questa "community string" ai dispositivi di rete che volete monitorare, in modo che `snmpd` (la "d" qui sta per il demone) sia in grado di trovarli. Se la rete non è di nuova costruzione, è possibile che sia già in uso una "stringa di comunità".
 
-## Abilitare il Collegamento Simbolico e il Completamento Automatico della scheda per i Comandi lnms
+Copiare il file `snmpd.conf` da LibreNMS:
 
-Per prima cosa, abbiamo bisogno di un collegamento simbolico al nostro comando _lnms_ in modo che possa essere eseguito da qualsiasi luogo:
+```
+cp /opt/librenms/snmpd.conf.example /etc/snmp/snmpd.conf
+```
 
-`ln -s /opt/librenms/lnms /usr/bin/lnms`
+Modificare questo file e cambiare la stringa di comunità da "RANDOMSTRINGGOESHERE" a quella che è o sarà la vostra community string. Nell'esempio, questa è "LABone":
 
-Poi, abbiamo bisogno di impostarlo per il completamento automatico:
+```
+vi /etc/snmp/snmpd.conf
+```
 
-`cp /opt/librenms/misc/lnms-completion.bash /etc/bash_completion.d/`
+Modificare questa riga:
 
-## Configurare snmpd
+```
+com2sec readonly  default         RANDOMSTRINGGOESHERE
+```
 
-_SNMP_ sta per "Simple Network Management Protocol" ed è usato in molti programmi di monitoraggio per estrarre dati. Nella versione 2, che stiamo usando qui, si tratta di una "stringa di comunità" che è specifica per il vostro ambiente. Dovrete assegnare questa "stringa di comunità" ai vostri dispositivi di rete che volete monitorare in modo che _snmpd_ (la "d" qui sta per il demone) sia in grado di trovarla. Se la vostra rete esiste da un po' di tempo, potreste già avere una "stringa di comunità" che state usando.
+in
 
-Per prima cosa, copiate il file snmp.conf da LibreNMS:
+```
+com2sec readonly  default         LABone
+```
 
-`cp /opt/librenms/snmpd.conf.example /etc/snmp/snmpd.conf`
+Salvare le modifiche e uscire.
 
-Poi, modificate questo file e cambiate la stringa di comunità da "RANDOMSTRINGGOESHERE" a qualunque sia la vostra stringa di comunità. Nel nostro esempio, lo cambiamo in "LABone":
+## Automatizzare con un cron job
 
-`vi /etc/snmp/snmpd.conf`
+Eseguire i seguenti comandi per impostare i lavori di cron:
 
-e cambiare questa linea:
+```
+cp /opt/librenms/librenms.nonroot.cron /etc/cron.d/librenms
+```
 
-`com2sec readonly  default         RANDOMSTRINGGOESHERE`
+Il poller deve essere eseguito una volta, anche se non c'è nulla da interrogare, prima di eseguire la procedura di configurazione web. In questo modo si risparmia la risoluzione dei problemi per capire cosa non va quando si ottengono errori di polling nella sezione di convalida.
 
-a
+Il poller viene eseguito con l'utente "librenms" e, sebbene sia possibile passare a questo utente ed eseguire i file cron, è meglio lasciare che il poller lo faccia da solo. Assicurarsi che siano trascorsi almeno 5 minuti per consentire l'esecuzione del cron e quindi proseguire con la sezione "Impostazione Web".
 
-`com2sec readonly  default         LABone`
-
-Ora salvate le vostre modifiche e uscite.
-
-## Automatizzare Con un Cron Job
-
-Fate quanto segue:
-
-`cp /opt/librenms/librenms.nonroot.cron /etc/cron.d/librenms`
 
 ## Rotazione del registro
 
-LibreNMS creerà un grande insieme di registri nel tempo. Avrete bisogno di impostare la rotazione dei log per questo, in modo che non consumi troppo spazio su disco. Per farlo, basta fare ora quanto segue:
+LibreNMS creerà nel tempo un'ampia serie di registri. È necessario impostare la rotazione dei registri per conservare lo spazio su disco. Per farlo, eseguire questo comando:
 
-`cp /opt/librenms/misc/librenms.logrotate /etc/logrotate.d/librenms`
+```
+cp /opt/librenms/misc/librenms.logrotate /etc/logrotate.d/librenms
+```
+
+## Installazione di composer (soluzione alternativa)
+
+PHP Composer è un requisito per l'installazione corrente (menzionato nella procedura precedente). Se l'installazione eseguita in precedenza non è andata a buon fine, è necessario eseguire questa operazione.
+
+Prima di iniziare, è necessario collegare la versione corrente del binario `php` a una posizione del percorso. Questa procedura ha utilizzato l'installazione REMI per ottenere la versione corretta di PHP, che non è installata nel percorso.
+
+Questo è risolvibile con un collegamento simbolico e vi renderà la vita molto più facile durante l'esecuzione dei passi rimanenti:
+
+```
+ln -s /opt/remi/php81/root/usr/bin/php /usr/bin/php
+```
+
+Accedere al sito web di [Composer](https://getcomposer.org/download/) e verificare che i passaggi seguenti non siano stati modificati. Eseguite quindi questi comandi da qualche parte sul computer. Una volta terminato, il composer verrà spostato:
+
+```
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php -r "if (hash_file('sha384', 'composer-setup.php') === '55ce33d7678c5a611085589f1f3ddf8b3c52d662cd01d4ba75c0ee0459970c2200a51f492d557530c71c15d8dba01eae') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+php composer-setup.php
+php -r "unlink('composer-setup.php');"
+```
+
+Spostatelo in un punto del percorso. Utilizzare `/usr/local/bin/` per questo:
+
+```
+mv composer.phar /usr/local/bin/composer
+```
 
 ## Impostazione Web
 
-Ora che abbiamo tutti i componenti installati e configurati, il nostro prossimo passo è finire l'installazione via web. Nella nostra versione di laboratorio, non abbiamo impostato nessun hostname, quindi per finire la configurazione, abbiamo bisogno di andare al server web per indirizzo IP. L'IP della nostra macchina di laboratorio è 192.168.1.140, quindi abbiamo bisogno di fare quanto segue in un browser web per finire l'installazione:
+Una volta installati e configurati tutti i componenti, il passo successivo è quello di completare l'installazione via web. Nella versione di laboratorio, non è stato impostato alcun hostname. Per completare la configurazione, è necessario accedere al server web tramite l'indirizzo IP.
+
+L'IP della macchina del laboratorio è 192.168.1.140. Per terminare l'installazione, navigare al seguente indirizzo in un browser web:
 
 `http://192.168.1.140/librenms`
 
-Supponendo che tutto funzioni correttamente, dovresti essere reindirizzato ai controlli di pre-installazione. Supponendo che questi siano tutti segnati come verdi, allora dovremmo essere in grado di continuare.
+Se tutto funziona correttamente, segue un reindirizzamento ai controlli di preinstallazione. Se tutti questi elementi sono contrassegnati in verde, è possibile continuare.
 
-![Precontrolli LibreNMS](../images/librenms_prechecks.png)
+![LibreNMS Prechecks](../images/librenms_prechecks.png)
 
-Ci sono quattro pulsanti sotto il logo LibreNMS. Il primo pulsante a sinistra è per i controlli preliminari. Il nostro prossimo pulsante è per il database. Avrete bisogno della password che avete impostato in precedenza nel processo per l'utente del database "librenms". Se hai seguito diligentemente, allora l'hai salvato in un posto sicuro. Vai avanti e clicca sul pulsante "Database". Il "User" e la "Password" dovrebbero essere tutto ciò che è necessario compilare qui. Una volta fatto questo, clicca sul pulsante "Check Credentials".
+Sotto il logo LibreNMS si trovano quattro pulsanti. Il primo pulsante a sinistra è per i controlli preliminari. Il pulsante successivo è quello del database. È necessaria la password impostata in precedenza per l'utente del database "librenms".
 
-![Database LibreNMS](../images/librenms_configure_database.png)
+Se ci avete seguito, avete già salvato questo dato in un posto sicuro. Cliccare sul pulsante "Database". È sufficiente inserire "User" e "Password". A questo punto, fare clic sul pulsante "Check Credentials".
 
-Una volta cliccato, se torna verde, allora sei pronto a cliccare sul pulsante "Build Database".
+![LibreNMS Database](../images/librenms_configure_database.png)
 
-![Stato del database di LibreNMS](../images/librenms_configure_database_status.png)
+Fare clic sul pulsante "Build Database" se diventa verde.
 
-Una volta completato, il terzo pulsante sarà attivo, che è "Create Admin User", quindi vai avanti e clicca su questo. Ti verrà richiesto un nome utente per l'amministratore. Nel nostro laboratorio useremo semplicemente "admin" e una password per questo utente. Assicurati che la password sia sicura e, di nuovo, registrala in un posto sicuro, come un gestore di password. Dovrai anche inserire l'indirizzo e-mail dell'utente amministrativo. Una volta che tutto questo è stato completato, basta cliccare sul pulsante "Add User".
+![LibreNMS Database Status](../images/librenms_configure_database_status.png)
 
-![Utente amministrativo di LibreNMS](../images/librenms_administrative_user.png)
+Il pulsante "Create Admin User" sarà ora attivo. Cliccatelo. Viene quindi richiesto il nome di un utente amministratore. Nel laboratorio è "admin." Creare una password per questo utente.
 
-Una volta fatto questo, vi troverete di fronte a una schermata di "Finish Install" Dovrebbe rimanere solo una voce per finire l'installazione ed è una linea che ti chiede di "validate your install"". Clicca sul link. Una volta che hai fatto questo e tutto è andato a buon fine, sarai reindirizzato alla pagina di login. Accedi con il tuo utente amministrativo e la tua password.
+Assicurarsi che la password sia sicura e registrarla in un luogo sicuro, ad esempio in un gestore di password. È necessario aggiungere anche l'indirizzo e-mail dell'utente amministrativo. Al termine, fare clic sul pulsante "Add User".
+
+![LibreNMS Administrative User](../images/librenms_administrative_user.png)
+
+A questo punto apparirà la schermata "Finish Install." Rimarrà solo un elemento per terminare l'installazione, una riga che chiede di "validate your install".
+
+Fare clic sul link. Si verificherà un reindirizzamento alla pagina di accesso. Accedere con l'utente amministrativo e la password.
 
 ## Aggiungere dispositivi
 
-Di nuovo, uno dei nostri presupposti era che state usando SNMP v2. Ricorda che ogni dispositivo che aggiungi deve essere membro della tua stringa di comunità. Qui aggiungiamo due dispositivi come esempi. Una workstation Ubuntu e un server CentOS. Molto probabilmente avrete switch gestiti, router e altri dispositivi da aggiungere. L'autore può dirvi per esperienza passata che l'aggiunta di switch e router tende ad essere molto più facile dell'aggiunta di stazioni di lavoro e server, che è il motivo per cui stiamo usando questi come esempi.
+Anche in questo caso, uno dei presupposti è che si stia utilizzando SNMP v2. Ricordate che ogni dispositivo aggiunto deve essere un membro della vostra stringa di comunità. Qui l'autore utilizza due esempi di dispositivi, una workstation Ubuntu e un server CentOS.
 
-### Impostazione della Stazione di Lavoro Ubuntu
+È probabile che si debbano aggiungere switch, router e altri dispositivi gestiti. L'autore può dire per esperienza che aggiungere switch e router è più facile che aggiungere workstation e server.
 
-Per prima cosa, installate _snmpd_ sulla workstation mentre aggiornate anche i pacchetti, giusto per essere sicuri:
+### Configurazione della workstation Ubuntu
 
-`sudo update && sudo apt-get upgrade && sudo apt-get install snmpd`
+Per prima cosa, installare `snmpd` sulla workstation e aggiornare i pacchetti per sicurezza:
 
-Successivamente, è necessario modificare il file snmpd.conf:
+```
+sudo update && sudo apt-get upgrade && sudo apt-get install snmpd
+```
 
-`sudo vi /etc/snmpd/snmpd.conf`
+Successivamente, è necessario modificare il file `snmpd.conf`:
 
-Vai avanti e trova le linee che descrivono la tua stazione di lavoro e cambiale con cose che identificano la stazione di lavoro. Queste linee sono mostrate qui sotto:
+```
+sudo vi /etc/snmpd/snmpd.conf
+```
+
+Trovate le righe che descrivono la vostra postazione di lavoro e cambiatele con altre che la identificano:
 
 ```
 sysLocation    Desktop
 sysContact     Username <user@mydomain.com>
 ```
 
-Per impostazione predefinita, quando si installa snmpd su Ubuntu, si associa solo all'indirizzo locale. Non ascolta l'indirizzo IP della vostra macchina. Questo non permetterà a LibreNMS di connettersi ad esso. Dobbiamo commentare questa linea:
+Quando si installa `snmpd` su Ubuntu, questo si collega solo all'indirizzo locale. Non ascolta l'indirizzo IP della macchina. Questo non permetterà a LibreNMS di connettersi ad esso. È necessario rimuovere questa riga:
 
-`agentaddress  127.0.0.1,[::1]`
+```
+agentaddress  127.0.0.1,[::1]
+```
 
-E aggiungete una nuova linea che assomiglia a quella che segue qui: (In questo esempio, l'indirizzo IP della nostra workstation è 192.168.1.122 e la porta UDP che stiamo impostando è "161")
+Aggiungete una nuova riga: (in questo esempio, l'indirizzo IP della vostra workstation è 192.168.1.122 e la porta UDP che state impostando è la "161")
 
-`agentAddress udp:127.0.0.1:161,udp:192.168.1.122:161`
+```
+agentAddress udp:127.0.0.1:161,udp:192.168.1.122:161
+```
 
-Successivamente, abbiamo bisogno di specificare la stringa della comunità di accesso in sola lettura. Trova le linee sottostanti e commentale. (si noti che le mostriamo come commentate qui sotto):
+È necessario specificare la community string per l'accesso in sola lettura. Trovate le linee sottostanti e commentatele come indicato:
 
 ```
 #rocommunity public default -V systemonly
 #rocommunity6 public default -V systemonly
 ```
 
-Poi, aggiungete una nuova linea:
+Aggiungere una riga:
 
-`rocommunity LABone`
+```
+rocommunity LABone
+```
 
-Ora salvate le vostre modifiche e uscite.
+Salvare le modifiche e uscire.
 
-Abilita e avvia _snmpd_:
+Abilitare e avviare `snmpd`:
 
 ```
 sudo systemctl enable snmpd
 sudo systemctl start snmpd
 ```
 
-Se stai usando un firewall sulle tue stazioni di lavoro interne, allora dovrai modificare il firewall per permettere il traffico UDP dal server di monitoraggio o dalla rete. LibreNMS vuole anche essere in grado di "pingare" il vostro dispositivo, quindi assicuratevi che la porta 8 di icmp sia consentita dal server.
+Se si utilizza un firewall sulle postazioni di lavoro interne, è necessario modificarlo per consentire il traffico UDP dal server di monitoraggio o dalla rete. LibreNMS vuole anche essere in grado di fare "ping" al dispositivo. Assicurarsi che la porta 8 ICMP del server non sia filtrata.
 
 ### Configurazione del server CentOS o Rocky Linux
 
-Diamo per scontato che qui siate root o che possiate fare _sudo_ per diventarlo. Per prima cosa, abbiamo bisogno di installare alcuni pacchetti:
+Si presuppone che siate root o che possiate fare `sudo` per elevare i privilegi. È necessario installare alcuni pacchetti:
 
-`dnf installare net-snmp net-snmp-utils`
+```
+dnf install net-snmp net-snmp-utils
+```
 
-Successivamente, vogliamo creare un file snmpd.conf. Piuttosto che cercare di navigare nel file che è incluso, spostate questo file per rinominarlo, e create un nuovo file vuoto:
+Creare un file `snmpd.conf`. LibreNMS vuole anche essere in grado di "pingare" il dispositivo, quindi assicuratevi che la porta icmp 8 sia consentita dal server.
 
-`mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig`
+```
+mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig
+```
 
 e
 
-`vi /etc/snmp/snmpd.conf`
+```
+vi /etc/snmp/snmpd.conf
+```
 
-Poi copiate il seguente nel nuovo file:
+Copiare il tutto nel nuovo file:
 
 ```
 # Map 'LABone' community to the 'AllUser'
@@ -479,11 +554,11 @@ view AllView included .1
 access AllGroup "" any noauth exact AllView none none
 ```
 
-CentOS e Rocky usano una convenzione di mappatura per dirigere le cose. Il file qui sopra è commentato bene in modo da poter imparare cosa sta succedendo, ma non include tutto il disordine del file originale.
+CentOS e Rocky utilizzano una convenzione di mappatura per indirizzare le cose. Il file mostrato contiene commenti per definire ciò che accade, ma non include tutto il disordine del file originale.
 
-Una volta fatte le modifiche, salvatele e uscite dal file.
+Una volta apportate le modifiche, salvarle e uscire dal file.
 
-Ora abbiamo bisogno di abilitare e avviare _snmpd_:
+Abilitare e avviare `snmpd`:
 
 ```
 systemctl enable snmpd
@@ -492,93 +567,84 @@ systemctl start snmpd
 
 #### Firewall
 
-Se state eseguendo un server, allora **state** eseguendo un firewall, giusto?  Stiamo assumendo _iptables_ come notato sopra, quindi abbiamo bisogno di modificare la nostra configurazione del firewall, (in questo caso, /etc/firewall.conf) e aggiungere l'accesso per il traffico UDP e ICMP proveniente dal server di monitoraggio. Se state eseguendo _firewalld_, sostituite semplicemente le regole appropriate per _firewalld_. Ecco un set di regole per il nostro server di esempio:
+Se state gestendo un server, allora **state** gestendo un firewall, giusto? Se si sta eseguendo `firewalld`, si presume che si utilizzi la zona "trusted" e che si voglia consentire tutto il traffico dal server di monitoraggio, 192.168.1.140:
 
 ```
-#!/bin/sh
-#
-#IPTABLES=/usr/sbin/iptables
-
-#  Unless specified, the defaults for OUTPUT is ACCEPT
-#    The default for FORWARD and INPUT is DROP
-#
-echo "   clearing any existing rules and setting default policy.."
-iptables -F INPUT
-iptables -P INPUT DROP
-iptables -A INPUT -p icmp --icmp-type 8 -s 192.168.1.140 -j ACCEPT
-iptables -A INPUT -p udp -m udp -s 192.168.1.140 -j ACCEPT
-iptables -A INPUT -p tcp -m tcp -s 192.168.1.0/24 --dport 22 -j ACCEPT
-iptables -A INPUT -i lo -j ACCEPT
-iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
-iptables -A INPUT -p tcp -j REJECT --reject-with tcp-reset
-iptables -A INPUT -p udp -j REJECT --reject-with icmp-port-unreachable
-
-/usr/sbin/service iptables save
+firewall-cmd --zone=trusted --add-source=192.168.1.140 --permanent
 ```
+Se la zona "trusted" non è corretta per il vostro ambiente, modificatela in base alle vostre esigenze. Considerate le vostre regole e il loro effetto prima di aggiungerle.
 
-Se siete nuovi a questo particolare concetto di _iptables_, il file /etc/firewall.conf è eseguibile, ed è il nostro modo di fare modifiche alle regole _iptables_ salvate che saranno ripristinate all'avvio. Nell'esempio precedente, stiamo permettendo il traffico "ping" e UDP dal nostro server di monitoraggio e SSH dalla nostra rete locale. Molte altre regole possono essere necessarie per le funzioni del vostro server, forse regole http o per permettere regole per la porta mysql, ecc. Una volta apportate le modifiche a /etc/firewall.conf, eseguitelo con:
+## Aggiungere i dispositivi in Librenms
 
-`/etc/firewall.conf`
+Dopo aver configurato i dispositivi campione per accettare il traffico SNMP dal server LibreNMS, il passo successivo consiste nell'aggiungere tali dispositivi a LibreNMS. Con l'interfaccia web di LibreNMS aperta, cliccare per aggiungere un dispositivo:
 
-## Aggiungere i Dispositivi in Librenms
+![LibreNMS Add Device](../images/librenms_add_device.png)
 
-Ora che i nostri dispositivi di esempio sono configurati per accettare il traffico snmp dal nostro server LibreNMS, il prossimo passo è quello di aggiungere questi dispositivi in LibreNMS. Presumiamo che abbiate l'interfaccia web di LibreNMS aperta, e se è così, vi mostrerà che non avete dispositivi aggiunti e vi chiederà di aggiungerne uno. Quindi vai avanti e fallo. Una volta che hai cliccato per aggiungere un dispositivo, ti troverai di fronte a questa schermata:
+Inserite le informazioni utilizzate per i vostri dispositivi di prova. Immettere l'IP della workstation Ubuntu da avviare. Nell'esempio è 192.168.1.122. Aggiungere la stringa di comunità "LABone" nel campo "Community".
 
-![LibreNMS Aggiungi Dispositivo](../images/librenms_add_device.png)
+Cliccare sul pulsante "Add Device". Se tutto è corretto, il processo si concluderà con successo.
 
-Mettete le informazioni che abbiamo usato per i nostri dispositivi di prova. Nel nostro caso, stiamo usando l'IP della workstation Ubuntu da avviare, nel nostro esempio è 192.168.1.122. L'unica altra cosa che dovremo aggiungere qui è la stringa della comunità nel campo "Community", quindi dovremmo digitare "LABone" qui. Ora clicca sul pulsante "Add Device". Supponendo che tu abbia fatto tutto correttamente quando hai aggiunto il dispositivo, il tuo dispositivo dovrebbe essere aggiunto con successo. Se si verifica un errore di aggiunta, rivedete la configurazione SNMP per la stazione di lavoro o il firewall, se esiste. Quindi ripetiamo il processo "Add Device" per il nostro server CentOS.
+Se si verifica un errore di "failure to add", rivedere l'impostazione SNMP della workstation o del firewall, se esiste. Ripetere la procedura "Add Device" per il server CentOS.
 
-## Ottenere Avvisi
+## Ricevere avvisi
 
-Come abbiamo detto dall'inizio, questo documento vi farà solo iniziare con LibreNMS. Ci sono un gran numero di elementi di configurazione aggiuntivi, una vasta API (Application Programming Interface), un sistema di avvisi che fornisce un numero enorme di opzioni per la consegna, chiamato "Transports", e molto altro.  Non creeremo nessuna regola di allarme, ma invece modificheremo la regola di allarme integrata "Device Down! Due to no ICMP response" che è preconfigurata fuori dalla scatola, e per "Trasports" ci atteniamo a "Mail", che è solo email. Sappiate che non siete limitati.
+Come già detto all'inizio, questo documento serve solo per iniziare a utilizzare LibreNMS. Esiste un gran numero di elementi di configurazione aggiuntivi, un'ampia API (Application Programming Interface), un sistema di avvisi che fornisce un gran numero di opzioni per la consegna, chiamate "Transports", e molto altro ancora.
 
-Per poter utilizzare la posta elettronica per il nostro trasporto, però, dobbiamo avere la posta funzionante sul nostro server. Per farlo, useremo questa [procedura Postfix](../email/postfix_reporting.md). Esegui questa procedura per configurare postfix in modo che identifichi correttamente la provenienza dei messaggi, ma puoi fermarti dopo il processo di configurazione e tornare qui.
+Questo documento non contiene procedure per la creazione di regole di allerta. Si modificherà invece la regola di avviso incorporata "Device Down! Due to no ICMP response" che è preconfigurato in partenza. Per "Transports" utilizzeremo "Mail", che è semplicemente un'e-mail. Sappiate che non siete limitati a questa segnalazione.
 
-### Transport
+La posta deve essere funzionante per poter utilizzare l'e-mail per il trasporto. Utilizzate questa [Procedura di Postfix](../email/postfix_reporting.md) per ottenere questo risultato.
 
-Abbiamo bisogno di un modo per inviare i nostri avvisi. Come notato in precedenza, LibreNMS supporta un numero enorme di trasporti. Faremo il nostro allarme via e-mail, che è definito come il trasporto "Mail". Per impostare il trasporto:
+### Transports
 
-1. Vai al cruscotto
-2. Fai passare il tuo mouse su "Alerts"
-3. Vai giù a "Alert Transports" e clicca su di esso
-4. Cliccate sul pulsante "Create alert transport" (Notate il pulsante "Create transport group"). Puoi usarlo per far arrivare gli avvisi a diverse persone)
-5. Nel campo "Transport name:", digitare "Alert By Email"
-6. Nel campo "Transport type:", usare il menu a tendina per selezionare "Mail"
-7. Assicurati che il campo "Default alert:" sia impostato su "On"
-8. Nel campo "Email:", scrivi l'indirizzo email dell'amministratore
-
-### Organizzare i Dispositivi in Gruppi
-
-Il modo migliore per impostare gli avvisi è quello di organizzare prima i tuoi dispositivi in un ordine logico. Attualmente, abbiamo una stazione di lavoro e un server in dispositivi. Anche se normalmente non vorremmo organizzare le due cose insieme, lo faremo per questo esempio. Tenete presente che il nostro esempio è anche ridondante, poiché esiste un gruppo "All Devices" che funzionerebbe anche per questo. Per impostare un gruppo di dispositivi:
+È necessario un modo per inviare gli avvisi. Come già detto, LibreNMS supporta un numero enorme di trasporti. L'avviso di posta elettronica, definito come trasporto "Mail", viene utilizzato in questo caso. Per impostare il trasporto:
 
 1. Vai al cruscotto
-2. Fai passare il tuo mouse su "Devices"
-3. Vai giù a "Manage Groups" e clicca su di esso
-4. Clicca sul pulsante "+ New Device Group"
-5. Nel campo "Name", scrivere "ICMP Group"
-6. Nel campo della descrizione scrivi quello che pensi possa aiutare a descrivere il gruppo
+2. Passare il mouse su "Alerts"
+3. Scendere fino a " Alert Transports" e fare clic su di esso
+4. Cliccare sul pulsante " Create alert transport" (Notare il pulsante "Create transport group". È possibile utilizzare questa opzione per inviare avvisi a più persone)
+5. Nel campo "Transport name:", immettere "Alert By Email"
+6. Nel campo "Transport type:", utilizzare il menu a tendina per selezionare "Mail"
+7. Assicurarsi che il campo " Default alert:" sia impostato su "On"
+8. Nel campo "Email:", inserire l'indirizzo email dell'amministratore
+
+### Configurazione del server CentOS o Rocky Linux
+
+Il modo migliore per impostare gli avvisi è organizzare i dispositivi in modo logico. Attualmente sono presenti una workstation e un server nei dispositivi. Normalmente non si possono combinare le due cose, come in questo caso.
+
+Questo esempio è anche ridondante, poiché esiste un gruppo "All Devices" che funziona anche per questo. Per impostare un gruppo di dispositivi:
+
+1. Vai al cruscotto
+2. Passare il mouse su "Devices"
+3. Scendere fino a "Manage Groups" e fare clic su di esso
+4. Cliccare sul pulsante "+ New Device Group"
+5. Nel campo "Name", inserire "ICMP Group"
+6. Nel campo della descrizione inserire ciò che si ritiene possa aiutare a descrivere il gruppo
 7. Cambiare il campo "Type" da "Dynamic" a "Static"
-8. Aggiungi entrambi i dispositivi al campo "Select Devices" e poi salva le tue modifiche
+8. Aggiungete ogni dispositivo al campo "Select Devices" e salvate le modifiche
 
-### Impostare le Regole di Allarme
+### Impostare le regole di avviso
 
-Ora che abbiamo impostato il trasporto e il gruppo di dispositivi, configuriamo la regola di allarme. Per impostazione predefinita, LibreNMS ha diverse regole di allarme già create per voi:
+Configurare poi la regola di avviso. Per impostazione predefinita, LibreNMS ha diverse regole di avviso già create per voi:
 
 1. Vai al cruscotto
-2. Fai passare il tuo mouse su "Alerts"
-3. Vai giù a "Alert Rules" e cliccaci sopra
-4. La regola attiva in alto sul display sarà "Device Down! Due to no ICMP response." Vai su "Action" (colonna all'estrema destra) e clicca sull'icona della matita per modificare la regola.
-5. Lascia tutti i campi in alto così come sono e vai giù al campo "Match devices, groups and locations list:" e clicca dentro il campo
+2. Passare il mouse su "Alerts"
+3. Scendere fino a "Alert Rules" e fare clic sopra
+4. La regola attiva principale sarà "Device Down! Due to no ICMP response." Andare su "Action" (colonna all'estrema destra) e fare clic sull'icona della matita per modificare la regola.
+5. Lasciare tutti i campi in alto con le impostazioni predefinite. Nel campo "Match devices, groups and locations list:", fare clic all'interno del campo.
 6. Selezionare "ICMP Group" dalla lista
 7. Assicurarsi che il campo "All devices except in list:" sia "Off"
-8. Clicca all'interno del campo "Transports:" e seleziona "Mail: Alert By Email" e salva la tua regola.
+8. Fare clic nel campo " Transports:" e selezionare "Mail: Alert By Email" e salvare la regola.
 
-Prima di salvare, la vostra regola dovrebbe avere un aspetto simile a questo:
+Prima di salvare, la regola sarà:
 
-![Regola di Allarme di LibreNMS](../images/librenms_alert_rule.png)
+![LibreNMS Alert Rule](../images/librenms_alert_rule.png)
 
-Questi due dispositivi dovrebbero ora avvisarti via e-mail se sono fuori uso e quando si ristabiliscono.
+Questi due dispositivi ora vi avviseranno via e-mail se sono inattivi e al momento del ripristino.
 
 ## Conclusioni
 
-LibreNMS è un potente strumento di monitoraggio con un set completo di funzioni in un'unica applicazione. Abbiamo _appena_ scalfito la superficie delle capacità. Non vi abbiamo mostrato alcune delle schermate più ovvie. Per esempio, non appena si aggiungono dispositivi, supponendo che tutte le proprietà SNMP siano impostate correttamente, si inizierà a ricevere i grafici di larghezza di banda, utilizzo della memoria e utilizzo della CPU di ogni dispositivo. Non vi abbiamo mostrato la ricchezza dei trasporti disponibili oltre alla "Mail". Detto questo, vi abbiamo mostrato abbastanza in questo documento per iniziare a monitorare il vostro ambiente. LibreNMS richiede un po' di tempo per padroneggiare tutti gli elementi. Dovreste visitare l'[eccellente documentazione](https://docs.librenms.org/) del progetto per ulteriori informazioni.
+LibreNMS è un potente strumento di monitoraggio con una serie completa di funzioni in un'unica applicazione. Questo documento ha _solo_ scalfito la superficie delle sue capacità. Alcune delle schermate più semplici non vengono mostrate.
+
+Quando si aggiungono i dispositivi, supponendo che tutte le proprietà SNMP siano state impostate correttamente, si iniziano a ricevere i grafici della larghezza di banda, dell'utilizzo della memoria e dell'utilizzo della CPU di ciascun dispositivo. Questo laboratorio non ha mostrato la varietà dei trasporti disponibili oltre a "Mail".
+
+In questo documento sono state fornite le informazioni necessarie per iniziare a monitorare l'ambiente. LibreNMS richiede un po' di tempo per padroneggiare tutti gli elementi. Per ulteriori informazioni, visitate la [eccellente documentazione](https://docs.librenms.org/) del progetto.

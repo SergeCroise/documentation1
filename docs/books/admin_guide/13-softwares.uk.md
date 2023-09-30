@@ -1,7 +1,7 @@
 ---
 title: Управління програмним забезпеченням
 author: Antoine Le Morvan
-contributors: Colussi Franco, Steven Spencer
+contributors: Colussi Franco, Steven Spencer, Ganna Zhyrnova
 tested version: 8.5
 tags:
   - освіта
@@ -94,7 +94,7 @@ rpm -qf /path/to/file
 
     Після параметра "-q" ім'я пакета має бути точним. Метасимволи (знаки підстановки) не підтримуються.
 
-!!! Порада
+!!! tip "Порада"
 
     Однак можна переглянути список усіх встановлених пакетів і відфільтрувати їх за допомогою команди grep.
 

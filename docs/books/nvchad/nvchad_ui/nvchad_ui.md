@@ -1,7 +1,7 @@
 ---
 title: NvChad UI
 author: Franco Colussi
-contributors: Steven Spencer
+contributors: Steven Spencer, Ganna Zhyrnova
 tested: 8.6, 9.0
 tags:
   - nvchad
@@ -13,7 +13,7 @@ tags:
 
 !!! note "A few words about `mappings.lua`"
 
-    Throughtout NvChad's official documentation, commands such as `<leader>` are mentioned, along with other keys that might not be understandable to the casual reader. The reason for this is the default `mappings.lua` file (`../nvim/lua/core/mappings.lua`).
+    Throughout NvChad's official documentation, commands such as `<leader>` are mentioned, along with other keys that might not be understandable to the casual reader. The reason for this is the default `mappings.lua` file (`../nvim/lua/core/mappings.lua`).
 
     This file and the key mappings it describes are outlined [here](https://nvchad.com/docs/config/mappings). To be clear, you can override any key mappings using a custom `mappings.lua` file (`../nvim/lua/custom/mappings.lua`).
 

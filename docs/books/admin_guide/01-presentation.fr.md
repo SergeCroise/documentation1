@@ -29,7 +29,7 @@ Dans ce chapitre, vous allez en apprendre plus à propos des distributions GNU/L
 
 Linux, UNIX, BSD, VxWorks, Windows et MacOS sont tous des **systèmes d'exploitation**.
 
-!!! abstract
+!!! abstract "Abstract"
 
     Un système d'exploitation est un **ensemble de programmes qui gèrent les ressources disponibles d'un ordinateur**.
 
@@ -39,7 +39,7 @@ Dans le cadre de la gestion des ressources, le système d'exploitation doit :
     * La **mémoire physique** est constituée des barrettes de RAM et de la mémoire cache du processeur qui sont utilisées pour l'exécution des programmes.
     * La **mémoire virtuelle** est un emplacement sur le disque dur (la partition **swap**) qui permet de décharger la mémoire physique et de sauvegarder l'état actuel du système lors de l'arrêt électrique de l'ordinateur.
 * Intercepter les **accès aux périphériques**. Les logiciels sont rarement autorisés à accéder directement au matériel (sauf les cartes graphiques pour des besoins très spécifiques).
-* Fournir aux applications une **gestion correcte des tâches**. Le système d'exploitation est responsable de la planification des processus pour occuper le processeur.
+* Fournir aux applications une **gestion correcte des tâches**. Le système d'exploitation est responsable de l'ordonnencement des processus pour les répartir sur le ou les processeur(s).
 * **Protéger les fichiers** contre les accès non autorisés.
 * **Collecter des informations** sur les programmes utilisés ou en cours d'exécution.
 
@@ -89,7 +89,7 @@ UNIX est toujours d'actualité aujourd'hui (HP-UX, AIX, Solaris, etc.).
 
 * **2021** : Rocky Linux est créée, basée sur la distribution de Red Hat.
 
-!!! info
+!!! info "Info"
 
     Dispute sur le nom : bien que les gens soient habitués à appeler le système d'exploitation Linux, Linux est strictement un noyau. Nous ne devons pas oublier le développement et la contribution du projet GNU à la cause de l'open source ! Nous préférons appeler le système d'exploitation GNU/Linux.
 
@@ -156,7 +156,7 @@ Linux est basé sur et utilise des standards reconnus tels que [POSIX](http://fr
 
 * Tout est fichier.
 * Portabilité.
-* Ne faire qu’une seule chose et la faire bien.
+* Ne faire qu’une seule chose à la fois et la faire bien.
 * KISS : Keep It Simple and Stupid.
 * “UNIX est simple, il faut juste être un génie pour comprendre sa simplicité” (__Dennis Ritchie__)
 * “UNIX est convivial. Cependant UNIX ne précise pas vraiment avec qui.” (__Steven King__)
@@ -208,9 +208,9 @@ Elle implique :
 * La liberté de redistribuer des copies.
 * La liberté d’améliorer le programme et de publier ces améliorations, pour en faire profiter toute la communauté.
 
-D'autre part, même les produits sous licence GPL peuvent avoir un coût. Ce n'est pas pour le produit lui-même, mais pour la **garantie qu'une équipe de développeurs continuera à travailler dessus pour le faire évoluer et résoudre les erreurs ou même fournir un support aux utilisateurs**.
+D'autre part, même les produits sous licence GPL peuvent avoir un coût. Ce n'est pas pour le produit lui-même, mais pour la **garantie qu'une équipe de développeurs continuera à travailler dessus pour le faire évoluer, corriger les erreurs et résoudre les  problèmes ou même fournir un support aux utilisateurs**.
 
-## Les domaines d’emploi
+## Les domaines d’utilisation
 
 Une distribution Linux excelle pour :
 

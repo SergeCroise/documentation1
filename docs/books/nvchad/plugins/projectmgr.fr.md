@@ -1,7 +1,7 @@
 ---
 title: Gestionnaire de Projet
 author: Franco Colussi
-contributors: Steven Spencer
+contributors: Steven Spencer, Ganna Zhyrnova
 tested_with: 8.7, 9.1
 tags:
   - nvchad
@@ -133,7 +133,7 @@ Une fois les modifications terminées, votre configuration devrait ressembler à
 
 Maintenant à chaque fois que vous ouvrez vos projets, les fichiers mis à jour seront automatiquement téléchargés depuis le dépôt Git et vous aurez les derniers fichiers sur lesquels vous travailliez dans l'éditeur prêts à être édités.
 
-!!! Avertissement
+!!! warning "Avertissement"
 
     Les fichiers ouverts dans les tampons de session enregistrés de NvChad ne sont pas automatiquement mis à jour.
 

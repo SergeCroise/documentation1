@@ -1,7 +1,7 @@
 ---
 title: Sincronizzazione con rsync
 author: Steven Spencer
-contributors: Ezequiel Bruni, tianci li, Franco Colussi
+contributors: Ezequiel Bruni, tianci li, Ganna Zhyrnova
 tags:
   - synchronization
   - rsync
@@ -13,25 +13,25 @@ tags:
 
 Ecco tutto ciò di cui avrete bisogno per capire e seguire questa guida:
 
-* Una macchina con Rocky Linux
-* Essere in grado di modificare i file di configurazione dalla riga di comando.
-* Conoscere l'uso di un editor a riga di comando (qui usiamo _vi_, ma potete usare il vostro editor preferito).
+* Una macchina con Rocky Linux.
+* Essere a proprio agio con la modifica dei file di configurazione dalla riga di comando
+* Conoscenza dell'uso di un editor a riga di comando (qui si usa _vi_, ma si può usare il proprio editor preferito)
 * È necessario avere accesso a root e, idealmente, essere registrati come utente root nel proprio terminale
-* Coppia di chiavi SSH Pubbliche e Private
-* Essere in grado di creare un semplice script bash, utilizzando vi o l'editor preferito, e di testarlo.
+* Coppia di chiavi SSH Pubbliche e Private.
+* In grado di creare uno script bash con `vi` o con il vostro editor preferito e di testarlo.
 * In grado di utilizzare _crontab_ per automatizzare l'esecuzione dello script.
 
 ## Introduzione
 
-L'uso di `rsync` su SSH non è né potente come [lsyncd](../backup/mirroring_lsyncd.md) (che consente di osservare una directory o un file per le modifiche e mantenerlo sincronizzato in tempo reale), né flessibile come [rsnapshot](../backup/rsnapshot_backup.md) (che offre la possibilità di eseguire facilmente il backup di più targets da una singola macchina). Tuttavia, offre la possibilità di mantenere aggiornati due computer in base a una pianificazione definita dall'utente.
+L'uso di `rsync` su SSH non è né potente come [lsyncd](../backup/mirroring_lsyncd.md) (che consente di monitorare una directory o un file per le modifiche e di mantenerlo sincronizzato in tempo reale), né flessibile come [rsnapshot](../backup/rsnapshot_backup.md) (che offre la possibilità di eseguire il backup di più destinazioni da una singola macchina). Tuttavia, offre la possibilità di mantenere aggiornati due computer in base a una pianificazione definita dall'utente.
 
-Se avete bisogno di mantenere aggiornato un insieme di directory sul computer di destinazione e non vi interessa la sincronizzazione in tempo reale come caratteristica, allora `rsync` su SSH è probabilmente la soluzione migliore.
+Se avete bisogno di mantenere aggiornata una serie di directory sul computer di destinazione e non vi interessa la sincronizzazione in tempo reale come caratteristica, allora `rsync` su SSH è probabilmente la soluzione migliore.
 
-Per tutto ciò che segue, faremo le cose come utente root, per cui è necessario effettuare il login come root o usare il comando `sudo -s` per passare all'utente root nel terminale.
+Per questa procedura, si opererà come utente root. Effettuate il login come root o utilizzate il comando `sudo -s` per passare all'utente root nel vostro terminale.
 
 ### Installazione di `rsync`
 
-Anche se `rsync` potrebbe essere già installato, è meglio aggiornare `rsync` alla versione più recente sui computer di origine e di destinazione. Per assicurarsi che `rsync` sia installato e aggiornato, eseguire le seguenti operazioni su entrambi i computer:
+Anche se probabilmente `rsync` è già installato, è meglio aggiornare `rsync` alla versione più recente sui computer di origine e di destinazione. Per assicurarsi che `rsync` sia aggiornato, eseguire le seguenti operazioni su entrambi i computer:
 
 `dnf install rsync`
 
@@ -39,17 +39,17 @@ Se il pacchetto non è installato, `dnf` chiederà di confermare l'installazione
 
 ### Preparazione dell'Ambiente
 
-Questo particolare esempio userà `rsync` sulla macchina di destinazione per prelevare dalla sorgente invece di spingere dalla sorgente alla destinazione, quindi è necessario impostare una [coppia di chiavi SSH](../security/ssh_public_private_keys.md) per questo. Una volta creata la coppia di chiavi SSH e confermato l'accesso senza password dal computer di destinazione al computer di origine, si può iniziare.
+Questo particolare esempio utilizzerà `rsync` sul computer di destinazione per prelevare dall'origine invece di spingere dall'origine alla destinazione. È necessario impostare una [coppia di chiavi SSH](../security/ssh_public_private_keys.md) per questo scopo. Una volta creata la coppia di chiavi SSH e confermato l'accesso senza password dal computer di destinazione al computer di origine, si può iniziare.
 
 ### parametri di `rsync` e impostazione di uno script
 
 Prima di lasciarsi prendere la mano con l'impostazione di uno script, è necessario decidere quali parametri utilizzare con `rsync`. Ci sono molte possibilità, quindi date un'occhiata al [manuale di rsync](https://linux.die.net/man/1/rsync). Il modo più comune di usare `rsync` è quello di usare l'opzione `-a`, perché `-a`, o archivio, combina una serie di opzioni in una sola e queste sono opzioni molto comuni. Che cosa include -a?
 
-* -r, ricorre le directory
+* -r, ricorrere le directory
 * -l, mantenere i collegamenti simbolici come collegamenti simbolici
 * -p, preservare le autorizzazioni
 * -t, preservare i tempi di modifica
-* -g, preservare il gruppo-
+* -g, preservare il gruppo
 * -o, preservare il proprietario
 * -D, conservare i file di dispositivo
 
@@ -58,7 +58,7 @@ Le uniche altre opzioni da specificare in questo esempio sono:
 * -e, specificare la shell remota da utilizzare
 * --delete, che dice che se la directory di destinazione contiene un file che non esiste nella sorgente, bisogna eliminarlo
 
-Successivamente, è necessario impostare uno script creando un file per esso. (Anche in questo caso, utilizzate il vostro editor preferito se non avete familiarità con vi) Per creare il file, basta usare questo comando:
+Successivamente, dobbiamo impostare uno script creando un file per esso (ancora una volta, utilizzate il vostro editor preferito se non avete familiarità con vi). Per creare il file, basta usare questo comando:
 
 `vi /usr/local/sbin/rsync_dirs`
 
@@ -68,14 +68,14 @@ E poi renderlo eseguibile:
 
 ## Impostazioni
 
-Ora, lo scripting lo rende super semplice e sicuro, in modo da poterlo testare senza timore. Si noti che l'URL utilizzato di seguito è "Soure.domain.com". Sostituirlo con il dominio o l'indirizzo IP del proprio computer di origine, entrambi funzionano. Ricordate inoltre che in questo esempio lo script viene creato sul computer "di destinazione", perché il file viene estratto dal computer di origine:
+Ora, lo scripting lo rende super semplice e sicuro, in modo da poterlo testare senza timore. Si noti che l'URL utilizzato di seguito è "source.domain.com". Sostituirlo con il dominio o l'indirizzo IP del proprio computer di origine, entrambi funzionano. Ricordate inoltre che in questo esempio lo script viene creato sul computer "di destinazione", perché il file viene estratto dal computer di origine:
 
 ```
 #!/bin/bash
 /usr/bin/rsync -ae ssh --delete root@source.domain.com:/home/your_user /home
 ```
 
-!!! attention "Attenzione"
+!!! warning "Attenzione"
 
     In questo caso, si presume che la propria home directory non esista sul computer di destinazione. **Se esiste, si consiglia di eseguire un backup prima di eseguire lo script!**
 
@@ -148,15 +148,24 @@ In questo modo si ottiene il cron, che può avere un aspetto simile a questo:
 #
 # m h  dom mon dow   command
 ```
-Il cron è impostato su un orologio di 24 ore, quindi la voce da inserire in fondo al file è la seguente:
+Il cron è impostato su un orologio di 24 ore, quindi la voce da inserire in fondo al file è:
 
 `00 23   *  *  *    /usr/local/sbin/rsync_dirs`
 
-Il comando deve essere eseguito alle ore 00, 23, 100, ogni giorno, ogni mese e ogni giorno della settimana. Salvare la voce di cron con:
+Questo comando deve essere eseguito alle 00 minuti, 23 ore, tutti i giorni, tutti i mesi e tutti i giorni della settimana. Salvare la voce di cron con:
 
 `Shift : wq!`
 
 ... o con i comandi che il vostro editor preferito utilizza per salvare un file.
+
+## Flags opzionali
+```
+-n : Esecuzione Dry-Run per vedere quali file verranno trasferiti 
+-v : elenca tutti i file che vengono trasferiti 
+-vvv : per fornire informazioni di debug durante il trasferimento dei file 
+-z : per abilitare la compressione durante il trasferimento 
+```
+
 
 ## Conclusioni
 

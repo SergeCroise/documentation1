@@ -15,7 +15,7 @@ Official introduction - NetworkManager is a standard Linux network configuration
 
 The suite mainly includes two command line tools:
 
-* `nmtui`. Configure the network in a graphical interface.
+* `nmtui`. Configures the network in a graphical interface.
 
 ```bash
 shell > dnf -y install NetworkManager NetworkManager-tui
@@ -30,7 +30,7 @@ shell > nmtui
 |Quit||
 ||OK|
 
-* `nmcli`. Use the command line to configure the network, either a pure command line or an interactive command line.
+* `nmcli`. Uses the command line to configure the network, either a pure command line or an interactive command line.
 
 ```bash
 Shell > nmcli connection show                                                                                                        
@@ -152,7 +152,7 @@ Shell > nmcli  connection  add  type  bond-slave   ifname NIC_DEVICE_NAME2   mas
 
 You can view more detailed information through `man 5 NetworkManager.conf` and `man 5 nm-settings-nmcli`.
 
-The content of the configuration file of the NetwrokManager network card is an init-style key file. For example:
+The content of the configuration file of the NetworkManager network card is an init-style key file. For example:
 
 ```bash
 Shell > cat /etc/NetworkManager/system-connections/ens160.nmconnection                                                               
@@ -207,7 +207,7 @@ method=disabled
 
 | key name       | description |
 |----------------|-----|
-| addresses | |
-| gateway | |
-| dns |  |
+| addresses | IP addresses assigned |
+| gateway | Gateway (next hop) for the interface|
+| dns | Domain Name Servers in use |
 | method | The method to be obtained by IP. The value is of string type. The value can be: auto, disabled, link-local, manual, shared |

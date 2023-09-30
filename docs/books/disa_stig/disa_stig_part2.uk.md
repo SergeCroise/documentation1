@@ -1,7 +1,7 @@
 ---
 title: Перевірка сумісності DISA STIG із OpenSCAP – Частина 2
 author: Scott Shinn
-contributors: Steven Spencer
+contributors: Steven Spencer, Ganna Zhyrnova
 tested_with: 8.6
 tags:
   - DISA
@@ -26,7 +26,7 @@ Rocky Linux 8 (і 9!) містить набір вмісту [SCAP](https://csrc
 oscap info /usr/share/xml/scap/ssg/content/ssg-rl8-ds.xml
 ```
 
-!!! нотатка
+!!! note "Примітка"
 
     Вміст Rocky Linux 8 використовуватиме тег «rl8» у назві файлу. У Rocky 9 це буде «rl9».
 

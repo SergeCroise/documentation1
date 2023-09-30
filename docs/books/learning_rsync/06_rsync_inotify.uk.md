@@ -1,7 +1,7 @@
 ---
 title: інсталяція та використання inotify-tools
 author: tianci li
-contributors: Steven Spencer
+contributors: Steven Spencer, Ganna Zhyrnova
 update: 2021-11-04
 ---
 
@@ -153,4 +153,4 @@ $a | while read directory event file
     `[root@Rocky ~]# echo "bash /root/rsync_inotify.sh &" >> /etc/rc.local`
     `[root@Rocky ~]# chmod +x /etc/rc.local`
 
-Якщо ви використовуєте протокол rsync для синхронізації, вам потрібно налаштувати службу rsync цільової машини, будь ласка, зверніться до [demo rsync 02](03_rsync_demo02.md), [файл конфігурації rsync](04_rsync_configure. md), [rsync free Secret authentication login](05_rsync_authentication-free_login.md)
+Якщо ви використовуєте протокол rsync для синхронізації, вам потрібно налаштувати службу rsync цільової машини, будь ласка, зверніться до [demo rsync 02](03_rsync_demo02.md), [файл конфігурації rsync](04_rsync_configure.md), [rsync free Secret authentication login](05_rsync_authentication-free_login.md)
